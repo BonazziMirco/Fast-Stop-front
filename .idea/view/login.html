@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+<!--    faccio il login con email e password-->
+    <div id="app" >
+        <h1>Login</h1>
+
+        <form @submit.prevent="handleLogin">
+            <div>
+                <label for="email">Email:</label>
+                <input
+                        type="email"
+                        id="email"
+                        v-model="formData.email"
+                        placeholder="inserisci email"
+                >
+            </div>
+
+            <div>
+                <label for="password">Password:</label>
+                <input
+                        :type="passwordFieldType"
+                        id="password"
+                        v-model="formData.password"
+                        placeholder="inserisci password"
+                >
+                <button type="button" @click="show" >{{showPassword ? 'nascondi': 'mostra'}}</button>
+            </div>
+
+            <button type="submit">Accedi</button>
+        </form>
+
+        <div v-if="message" style="margin-top: 20px;">
+            <p>{{ message }}</p>
+        </div>
+
+        <div>
+            <p>{{count}}</p>
+        </div>
+    </div>
+    <script src="login.js"></script>
+
+</body>
+</html>
