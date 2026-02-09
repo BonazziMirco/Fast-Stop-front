@@ -18,7 +18,7 @@
                         >Login
                         </button>
 
-                        <button @click="setActiveComponent('register')"
+                        <button @click="setActiveComponent('Register')"
                                 :class="{'active': activeComponent === 'Register'}"
                         >Register
                         </button>
@@ -26,9 +26,9 @@
                     </div>
 
                     <div v-else>
-                        <button @click="sectActiveComponent('sparcheggio')"
-                                :class="{'active': activeComponent === 'Sparcheggio'}"
-                        >Sparcheggia anticipatamente
+                        <button @click="sectActiveComponent('Profilo')"
+                                :class="{'active': activeComponent === 'Profilo'}"
+                        >Profilo
                         </button>
 
                         <button @click="logout">Logout</button>

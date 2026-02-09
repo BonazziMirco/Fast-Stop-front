@@ -9,11 +9,11 @@ const Register = {
     `
 };
 
-const Sparcheggio = {
+const Profilo = {
     template: `
-        <div class="sparcheggio">
-            <h2>Sparcheggio Component</h2>
-            <p>Qui puoi prenotare il parcheggio</p>
+        <div class="profilo">
+            <h2>Profilo</h2>
+            <p>Qui puoi prenderti a mazzate</p>
         </div>
     `
 };
@@ -40,7 +40,7 @@ const App = {
         Navbar,
         Login,
         Register,
-        Sparcheggio,
+        Profilo,
     },
 
     data(){
@@ -68,7 +68,7 @@ const App = {
             this.isLogged = true;
             this.userData = userData;
             this.savedEmail = userData.email; // Salva email per futuro
-            this.currentComponent = 'Sparcheggio';
+            this.currentComponent = 'profilo';
         }
     }
 };
