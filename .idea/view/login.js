@@ -1,59 +1,85 @@
+// login.js
+const Login = {
+    template: `
+        <div class="login-component">
+            <h1>Login</h1>
 
-    const { createApp } = Vue;
+            <form @submit.prevent="handleLogin">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        v-model="formData.email"
+                        placeholder="inserisci email"                        
+                    >
+                </div>
 
-    createApp({
-        data() {
-            return {
-                formData: {email: '',password: ''},
-                message: '',
-                showPassword: false,
-                count: 0
-            };
-        },
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <div class="password-container">
+                        <input
+                            :type="passwordFieldType"
+                            id="password"
+                            v-model="formData.password"
+                            placeholder="inserisci password"
+                        >
+                        <button 
+                            type="button" 
+                            @click="togglePassword"
+                            class="toggle-password"
+                        >
+                            {{ showPassword ? 'Nascondi' : 'Mostra' }}
+                        </button>
+                    </div>
+                </div>
 
-        computed: {
-            passwordFieldType(){
-                return this.showPassword ? 'text' : 'password';
-            }
-        },
-        methods: {
+                <button type="submit" class="submit-btn">Accedi</button>
+            </form>
 
-            async handleLogin() {
-                console.log('Email:', this.formData.email);
-                console.log('Password:', this.formData.password);
+            <div v-if="message" class="message">
+                <p>{{ message }}</p>
+            </div>
+        </div>
+    `,
 
-                if(!this.validateForm()){
-                    if (!this.formData.email.includes('@')) {
-                        this.message = 'Inserisci un\'email valida';
-                        return;
-                    }
-                    else {
-                        this.message = 'compila tutto bastardo';
-                    }
-
-                }
-                else{
-                    this.message = 'sto processando...';
-                    this.count++;
-                }
-
+    data() {
+        return {
+            formData: {
+                email: '',
+                password: ''
             },
+            showPassword: false,
+            message: ''
+        };
+    },
 
-            validateForm() {
-                if (!this.formData.email || !this.formData.password) {
-
-                    return false;
-                }
-                return true;
-            },
-
-            show(){
-                this.showPassword = !this.showPassword;
-            }
-
+    computed: {
+        passwordFieldType() {
+            return this.showPassword ? 'text' : 'password';
         }
-    }).mount('#app');
+    },
 
+    methods: {
+        togglePassword() {
+            this.showPassword = !this.showPassword;
+        },
 
+        handleLogin() {
+            // Reset messaggio precedente
+            this.message = '';
 
+            // Validazione base
+            if (!this.formData.email || !this.formData.password) {
+                this.message = 'Per favore, compila tutti i campi';
+                return;
+            }
 
+            this.$emit('login-success', {
+                email: this.formData.email
+            });
+        }
+    }
+}
+
+export default Login;

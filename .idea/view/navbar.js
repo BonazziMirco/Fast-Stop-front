@@ -1,5 +1,5 @@
 const Navbar = {
-    template: document.querySelector('#navbar-template').innerHTML,
+    template: document.getElementById('navbar-template').innerHTML,
 
 
     props: {

@@ -1,11 +1,5 @@
 import Navbar from './navbar.js';
-
-const Login = {
-    template: '<div>' +
-        '<h2>Login Component</h2>' +
-        '<button @click="$parent.handleLogin">Login</button>' +
-        '</div>'
-    };
+import Login from './login.js';
 
 const Register = {
     template: `
@@ -35,7 +29,9 @@ const App = {
         />
         
         <main class="content">
-        <component :is="currentComponent" />
+        <component :is="currentComponent"
+         @login-success="handleLoginSuccess"
+         />
         </main>
         </div>
     `,
@@ -51,6 +47,8 @@ const App = {
         return {
             currentComponent: 'Login',
             isLogged: false,
+            savedEmail: '', // Per ricordare l'email
+            userData: null
         };
     },
     methods: {
@@ -61,11 +59,15 @@ const App = {
         handleLogout() {
             this.isLogged = false;
             this.currentComponent = 'Login';
+            this.userData = null;
             alert('Logged out');
         },
 
-        handleLogin(){
+        handleLoginSuccess(userData) {
+            console.log('Login successo in App:', userData);
             this.isLogged = true;
+            this.userData = userData;
+            this.savedEmail = userData.email; // Salva email per futuro
             this.currentComponent = 'Sparcheggio';
         }
     }
