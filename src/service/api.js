@@ -58,6 +58,19 @@ export async function put(endpoint, data) {
     return handleResponse(response);
 }
 
+//PATCH
+export async function patch(endpoint, data) {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+    });
+    return handleResponse(response);
+}
+
 // DELETE
 export async function del(endpoint) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -69,3 +82,4 @@ export async function del(endpoint) {
     });
     return handleResponse(response);
 }
+

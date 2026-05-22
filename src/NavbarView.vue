@@ -3,6 +3,8 @@
     <div class="nav-container">
       <div class="nav-links">
 
+<!--        logo esteso e nome da aggiungere-->
+
 <!--        mappa sempre visibile-->
         <router-link to="/map" class="nav-btn">
           Mappa
@@ -25,21 +27,23 @@
                 </router-link>
               </template>
             </template>
-
-            <span>
-              Benvenuto, {{userEmail}}
-            </span>
-
-<!--            logout visibile se loggati-->
-            <button @click="logout" class="logout-btn">
-              Logout
-            </button>
           </template>
+
+
+<!--          in forse-->
+          <span>
+              Benvenuto, {{userEmail}}
+          </span>
 
 <!--          profilo-->
           <router-link to="/profilo" class="nav-btn">
             Profilo
           </router-link>
+
+          <!--            logout visibile se loggati-->
+          <button @click="logout" class="logout-btn">
+            Logout
+          </button>
         </template>
         <template v-else>
           <router-link to="/login" class="nav-btn">
