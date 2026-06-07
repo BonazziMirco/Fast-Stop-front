@@ -22,7 +22,7 @@
               </router-link>
 <!--              se admin ha una dasboard a parte-->
               <template v-if="isAdmin">
-                <router-link to="/dasboardAdmin" class="nav-btn">
+                <router-link to="/admin" class="nav-btn">
                   Dasboard Admin
                 </router-link>
               </template>
@@ -73,8 +73,11 @@ export default {
       return user?JSON.parse(user):null;
     },
 
+    //codice momentaneo per testare
+
     isLoggedIn(){
-      return !!this.userData;
+      return true
+      // return !!this.userData;
     },
 
     userEmail(){
@@ -86,15 +89,18 @@ export default {
     },
 
     isViewer(){
-      return this.isLoggedIn && this.userAuthority >=1;
+      return true
+      // return this.isLoggedIn && this.userAuthority >=1;
     },
 
     isOperator(){
-      return this.isLoggedIn && this.userAuthority >=2;
+      return true
+      // return this.isLoggedIn && this.userAuthority >=2;
     },
 
     isAdmin(){
-      return this.isLoggedIn && this.userAuthority >=3;
+      return true
+      // return this.isLoggedIn && this.userAuthority >=3;
     }
 
 

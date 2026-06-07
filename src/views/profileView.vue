@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
 
 <!-- immagine profio cazzata pensata, email, cambia password, targa e cambia targa-->
   <div class="container">
@@ -13,11 +13,11 @@
   </div>
 
   <div class="password">
-    <button @click="mostraPassword" class="btn">
+    <button v-if="popUpPassword" @click="mostraPassword" class="btn">
       cambia password
     </button>
-    <div v-if="popUpPassword">
-      <label for="oldPassword">Password:</label>
+    <div v-else>
+      <label for="oldPassword">Vecchia Password:</label>
       <input
           type="password"
           id="oldPassword"
@@ -25,7 +25,8 @@
           required
           :disabled="loading"
       >
-      <label for="newPassword">Password:</label>
+      <br>
+      <label for="newPassword">Nuova Password:</label>
       <input
           type="password"
           id="newPassword"
@@ -33,7 +34,8 @@
           required
           :disabled="loading"
       >
-      <label for="checkPassword">Password:</label>
+      <br>
+      <label for="checkPassword">Conferma Password:</label>
       <input
           type="password"
           id="checkPassword"
@@ -41,9 +43,11 @@
           required
           :disabled="loading"
       >
+      <br>
       <div v-if="passwordMsg">
         <p> {{ passwordMsg }} </p>
       </div>
+      <br>
       <button @click="confermaCambioPassword" class="btn">
         conferma
       </button>
@@ -53,11 +57,11 @@
   <div class="targa">
     <label>Targa:</label>
     <p>{{userTarga}}</p>
-    <button @click="mostraTarga" class="btn">
+    <button v-if="popUpTarga" @click="mostraTarga" class="btn">
       cambia targa
     </button>
-    <div v-if="popUpTarga">
-      <label for="passwordTarga">Password</label>
+    <div v-else>
+      <label for="passwordTarga">Password:</label>
       <input
         type="password"
         id="passwordTarga"
@@ -65,7 +69,8 @@
         required
         :disabled="loading"
       >
-      <label for="newTarga">Nuova Targa</label>
+      <br>
+      <label for="newTarga">Nuova Targa:</label>
       <input
         type="text"
         id="newTarga"
@@ -73,6 +78,7 @@
         required
         :disabled="loading"
       >
+      <br>
       <div v-if="targaMsg">
         <p> {{ targaMsg }} </p>
       </div>
@@ -98,7 +104,7 @@ export default {
       loading: false,
 
       //password
-      popUpPassword: false,
+      popUpPassword: true,
       passwordMsg: null,
       oldPassword: '',
       newPassword: '',
@@ -106,7 +112,7 @@ export default {
 
       //targa
       newTarga: '',
-      popUpTarga: false,
+      popUpTarga: true,
       targaMsg: null,
       passwordTarga: '',
 
@@ -143,8 +149,8 @@ export default {
     },
 
     mostraPassword() {
-      this.popUpPassword = true;
-      this.popUpTarga = false
+      this.popUpPassword = false;
+      this.popUpTarga = true
     },
 
     async confermaCambioPassword() {
@@ -185,8 +191,8 @@ export default {
     },
 
     mostraTarga() {
-      this.popUpTarga = true;
-      this.popUpPassword = false;
+      this.popUpTarga = false;
+      this.popUpPassword = true;
     },
 
     async cambioTarga() {
