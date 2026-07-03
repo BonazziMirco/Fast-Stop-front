@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import {post} from "@/service/api.js";
+
 export default {
   name: 'LoginView',
   data() {
@@ -66,29 +68,11 @@ export default {
 
       try {
         // Chiamata API al backend
-        const response = await fetch('http://localhost:3000/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // IMPORTANTE: per inviare/ricevere cookie
-          body: JSON.stringify({
-            email: this.email,
-            password: this.password
-          })
-        });
-
-        const data = await response.json();
-        // data.token
-
-        if (!response.ok) {
-          // Gestione errori dal backend
-          this.error=(data.message || 'Errore durante il login');
-          return;
-        }
+        const data = await post('@/service/api/login', {email: this.email, password: this.password});
 
         // Salva dati utente
         localStorage.setItem('user', JSON.stringify({
+          id: data.user.id,
           email: data.user.email,
           authority: data.user.authority
         }));
@@ -110,8 +94,22 @@ export default {
 
       } catch (err) {
         // Gestione errori
-        this.error = err.message || 'Errore di connessione al server';
-        console.error('Errore login:', err);
+        switch(err.status){
+          case 400:
+            this.error = 'email o password non corretti. riprova';
+            break;
+          case 403:
+            this.error = 'account disabilitato, contatta l\'amministratore';
+            break;
+          case 401:
+            this.error= 'sessione scaduta. effettua nuovamente il login.';
+            break;
+          case 500:
+            this.error='errore nel server. riprova più tardi.';
+            break;
+            default:
+              this.error = err.message || 'errore durante il login. rirpova più tardi.'
+        }
       } finally {
         this.loading = false;
       }

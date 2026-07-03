@@ -8,7 +8,7 @@
 
   <div class="email">
     <label>E-mail:</label>
-    <p>{{userEmail}}</p>
+    <p>{{user.email}}</p>
     <!-- modifica email -->
   </div>
 
@@ -56,7 +56,7 @@
 
   <div class="targa">
     <label>Targa:</label>
-    <p>{{userTarga}}</p>
+    <p>{{user.targa}}</p>
     <button v-if="popUpTarga" @click="mostraTarga" class="btn">
       cambia targa
     </button>
@@ -98,10 +98,7 @@ export default {
   name: 'profileView',
   data() {
     return {
-      userEmail: '',
-      userTarga: '',
-      userRole: '',
-      loading: false,
+      user: null,
 
       //password
       popUpPassword: true,
@@ -127,15 +124,32 @@ export default {
   methods: {
     async caricaProfilo() {
       this.loading = true
+
+      //carica i dati presi da localStorage
+      const savedUser = localStorage.getItem('user')
+      if (savedUser) {
+        this.user = JSON.parse(savedUser)
+        console.log('dati utente caricati da localStorage:', this.user)
+      }
+      //raccimola altri dati dal backend
       try {
         const data = await get('/profile')
-        this.userEmail = data.email
-        this.userTarga = data.targa
-        this.userRole = data.role
+        this.user = {
+          ...this.user,
+          email: data.email,
+          car_plate: data.targa || data.car_plate,
+          authority: data.role || data.authority,
+          id: data.id
+        }
+
+        localStorage.setItem('user', JSON.stringify(this.user))
+
+        console.log('dati aggiornati', this.user)
       }catch(error) {
         console.error('errore caricamento profilo:',error)
         if (error.status === 401) {
         alert('sessione scaduta. riaccedi')
+          localStorage.removeItem('user')//pulizia
         //reindirizza
         this.$router.push('/login')
         }
@@ -171,7 +185,7 @@ export default {
       this.passwordMsg = null
 
         try{
-          await patch('http://localhost:3000/profile/password',{
+          await patch('/profile/password',{
               oldPassword: this.oldPassword,
               newPassword: this.newPassword
           })
@@ -205,12 +219,17 @@ export default {
       this.targaMsg = null
 
       try{
-         await patch('http://localhost:3000/profile/car-plate',{
+         const data = await patch('/profile/car-plate',{
             password: this.passwordTarga,
             car_plate: this.newTarga.toUpperCase().trim(),
          })
         console.log("cambio riuscito")
         // aggiorna targa
+
+        this.user.car_plate = this.newTarga.toUpperCase().trim()
+        localStorage.setItem('user', JSON.stringify(this.user))
+
+        this.popUpTarga = false
       }
       catch(error) {
         this.targaMsg = error||'errore nel cambio password'
