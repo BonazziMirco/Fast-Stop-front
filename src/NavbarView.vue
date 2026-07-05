@@ -1,58 +1,103 @@
 <template>
-  <nav class="navbar">
-    <div class="nav-container">
-      <div class="nav-links">
+  <nav class="bg-white border border-blue-900 rounded-xl mx-4 my-3 shadow-sm">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center flex-shrink-0">
+x          <img src="../public/logo-esteso.png" alt="logo" class="h-10 w-auto object-contain" />
+        </div>
 
-<!--        logo esteso e nome da aggiungere-->
+        <div v-if="isLoggedIn" class="flex items-start gap-3">
+            <span class="text-blue-950 text-base font-medium font-['Comic_Sans_MS'] italic border-l-2 border-gray-300 pl-4">
+              Benvenuto, {{ userEmail }}
+            </span>
+        </div>
 
-<!--        mappa sempre visibile-->
-        <router-link to="/map" class="nav-btn">
-          Mappa
-        </router-link>
-        <template v-if="isLoggedIn">
-          <!-- loggato: e viewer solo stats-->
-          <template v-if="isViewer">
-            <router-link to="/stats" class="nav-btn">
-              Statistiiche
+
+        <!-- Sezione destra -->
+        <div class="flex items-start gap-4 flex-wrap">
+          <!-- Benvenuto e Profilo -->
+          <div v-if="isLoggedIn" class="flex items-center gap-3">
+            <router-link
+                to="/profilo"
+                class="px-4 py-2 text-red-600 rounded-lg hover:bg-red-200 hover:border-red-300 transition-all duration-200 text-sm font-medium"
+                active-class="bg-red-100 border border-red-300"
+            >
+              Profilo
             </router-link>
-<!--            se è operatore può modificare i parcheggi-->
-            <template v-if="isOperator">
-              <router-link to="/parking" class="nav-btn">
-                Aggiorna Parcheggi
-              </router-link>
-<!--              se admin ha una dasboard a parte-->
-              <template v-if="isAdmin">
-                <router-link to="/admin" class="nav-btn">
-                  Dasboard Admin
+          </div>
+
+          <div class="w-px h-8 bg-gray-200"></div>
+
+          <!-- Link di navigazione -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <router-link
+                to="/map"
+                class="px-4 py-2 text-red-600 hover:bg-red-200 hover:border-red-300 border border-transparent rounded-lg transition-all duration-200 text-sm font-medium"
+                active-class="bg-red-100 border border-red-300"
+            >
+              Mappa
+            </router-link>
+
+            <template v-if="isLoggedIn">
+              <template v-if="isViewer">
+                <router-link
+                    to="/stats"
+                    class="px-4 py-2 text-red-600 hover:bg-red-200 hover:border-red-300 border border-transparent rounded-lg transition-all duration-200 text-sm font-medium"
+                    active-class="bg-red-100 border border-red-300"
+                >
+                  Statistiche
                 </router-link>
+
+                <template v-if="isOperator">
+                  <router-link
+                      to="/parking"
+                      class="px-4 py-2 text-red-600 hover:bg-red-200 hover:border-red-300 border border-transparent rounded-lg transition-all duration-200 text-sm font-medium"
+                      active-class="bg-red-100 border border-red-300"
+                  >
+                    Aggiorna Parcheggi
+                  </router-link>
+
+                  <template v-if="isAdmin">
+                    <router-link
+                        to="/admin"
+                        class="px-4 py-2 text-red-600 hover:bg-red-200 hover:border-red-300 border border-transparent rounded-lg transition-all duration-200 text-sm font-medium"
+                        active-class="bg-red-100 border-red-300"
+                    >
+                      Dashboard Admin
+                    </router-link>
+                  </template>
+                </template>
               </template>
+
+              <!-- Logout -->
+              <button
+                  @click="logout"
+                  class="px-4 py-2 text-white bg-blue-800 border border-blue-300 rounded-lg hover:bg-blue-950 hover:border-blue-400 transition-all duration-200 text-sm font-medium"
+              >
+                Logout
+              </button>
             </template>
-          </template>
 
-
-<!--          in forse-->
-          <span>
-              Benvenuto, {{userEmail}}
-          </span>
-
-<!--          profilo-->
-          <router-link to="/profilo" class="nav-btn">
-            Profilo
-          </router-link>
-
-          <!--            logout visibile se loggati-->
-          <button @click="logout" class="logout-btn">
-            Logout
-          </button>
-        </template>
-        <template v-else>
-          <router-link to="/login" class="nav-btn">
-            Login
-          </router-link>
-          <router-link to="/signin" class="nav-btn">
-            Sign In
-          </router-link>
-        </template>
+            <!-- Login/Signin per non loggati -->
+            <template v-else>
+              <router-link
+                  to="/login"
+                  class="px-4 py-2 text-red-600 bg-red-50 border border-red-300 rounded-lg hover:bg-red-100 hover:border-red-400 transition-all duration-200 text-sm font-medium"
+                  active-class="bg-blue-50 border-blue-400"
+              >
+                Login
+              </router-link>
+              <router-link
+                  to="/signin"
+                  class="px-4 py-2 text-white bg-red-600 border border-red-600 rounded-lg hover:bg-red-700 hover:border-red-700 transition-all duration-200 text-sm font-medium"
+                  active-class="bg-red-700 border-red-700"
+              >
+                Sign In
+              </router-link>
+            </template>
+          </div>
+        </div>
       </div>
     </div>
   </nav>

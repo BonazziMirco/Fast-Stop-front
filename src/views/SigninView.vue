@@ -63,6 +63,8 @@
 </template>
 
 <script>
+import {post} from '../service/api';
+
 export default {
   name: 'SigninView',
   data() {
@@ -82,11 +84,12 @@ export default {
       //reset stati
       this.message=null;
       this.error=null;
+      this.success = false;
       if (this.password !== this.confirmPassword) {
         this.message='le password non coincidono';
         return
       }
-      if (this.password.length < 6) {
+      if (this.password.length < 8) {
         this.message = 'La password deve avere almeno 8 caratteri';
         return;
       }
@@ -99,24 +102,8 @@ export default {
       this.loading=true;
 
       try{
-        const response = await fetch('http://localhost:3000/auth/signin', {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: this.email,
-            password: this.password,
-            car_plate: this.targa
-          })
-        });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          this.error = (data.message||'errore durante la registrazione');
-          return;
-        }
+        const data = await post('/auth/signin', {email: this.email, password: this.password, targa:this.targa});
 
         this.success=true;
         console.log('Registrazione riuscita:', data);
@@ -127,9 +114,20 @@ export default {
           this.$router.push('/login');
         }, 1500);
       }
-      catch(error){
-        this.error = error.message||'errore di connessione al server';
-        console.error('Errore signin:', error);
+      catch(err){
+        switch (err.status){
+          case 400:
+            this.error = 'email già registrata o dati non validi. Riprova';
+            break;
+          case 409:
+            this.error = 'Questa mail è già registrata. Effettua il login.'
+                break;
+          case 500:
+            this.error = 'errore nel server';
+            break;
+            default:
+              this.error = err.message || 'errore durante la registrazione. Riprova più tardi';
+        }
       }
       finally {
         this.loading=false;

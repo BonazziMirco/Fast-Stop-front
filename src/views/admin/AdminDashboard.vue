@@ -1,7 +1,7 @@
 <template>
-  <div class="admin-layout">
+  <div class="flex min-h-screen bg-gray-100 border-2 border-red-900 rounded-lg">
     <AdminSidebar />
-    <div class="admin-content">
+    <div class="flex-1 p-8 overflow-y-auto">
       <router-view />
     </div>
   </div>
