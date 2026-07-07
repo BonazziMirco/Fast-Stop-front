@@ -54,7 +54,7 @@
     <!-- Sezione Cambio Password -->
     <div class="mt-6 bg-white rounded-xl shadow-md border border-gray-200 p-6">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">🔒 Password</h3>
+        <h3 class="text-lg font-semibold text-gray-800"> Password</h3>
         <button
             v-if="popUpPassword"
             @click="mostraPassword"
@@ -126,7 +126,7 @@
     <!-- Sezione Cambio Targa -->
     <div class="mt-6 bg-white rounded-xl shadow-md border border-gray-200 p-6">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">🚗 Targa</h3>
+        <h3 class="text-lg font-semibold text-gray-800"> Targa</h3>
         <button
             v-if="popUpTarga"
             @click="mostraTarga"
@@ -190,7 +190,7 @@
           @click="logout"
           class="w-full px-4 py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl hover:bg-red-100 transition-colors font-medium"
       >
-        🚪 Logout
+         Logout
       </button>
     </div>
   </div>
