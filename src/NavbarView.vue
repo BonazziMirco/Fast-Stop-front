@@ -86,8 +86,8 @@ x          <img src="../public/logo-esteso.png" alt="logo" class="h-10 w-auto ob
             <template v-else>
               <router-link
                   to="/login"
-                  class="px-4 py-2 text-red-600 bg-red-50 border border-red-300 rounded-lg hover:bg-red-100 hover:border-red-400 transition-all duration-200 text-sm font-medium"
-                  active-class="bg-blue-50 border-blue-400"
+                  class="px-4 py-2 text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-800 hover:border-blue-800 transition-all duration-200 text-sm font-medium"
+                  active-class="bg-blue-700 border-blue-700"
               >
                 Login
               </router-link>
