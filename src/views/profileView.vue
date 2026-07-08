@@ -198,6 +198,10 @@
 
 <script>
 import {get, patch, post} from '../service/api'
+import crown from '@/assets/crown.png'
+import settings from '@/assets/settings.png'
+import viewer from '@/assets/viewer.png'
+import user from '@/assets/user.png'
 
 export default {
   name: 'profileView',
@@ -229,31 +233,42 @@ export default {
     avatarImage: function () {
       const role = this.user?.authority
       const images = {
-        3: '/src/assets/crown.png', //admin
-        2: '/src/assets/settings.png',  //operator
-        1: '/src/assets/viewer.png',  //viewer
-        0: '/src/assets/user.png' //user
+        3: crown, //admin
+        2: settings,  //operator
+        1: viewer,  //viewer
+        0: user //user
       }
-      return images[role] || '/src/assets/user.png'
-    }
+      return images[role] || user
+    },
+
+    avatarRing(){
+      const role= this.user?.authority
+      const classes = {
+        3:'ring-blue-950',
+        2:'ring-red-700',
+        1:'ring-red-500',
+        0:'ring-gray-500'
+      }
+      return classes[role] || 'ring-gray-500'
+    },
   },
 
-  avatarRing(){
-    const role= this.user?.authority
-    const classes = {
-      3:'ring-blue-950',
-      2:'ring-red-700',
-      1:'ring-red-500',
-      0:'ring-gray-500'
-    }
-    return classes[role] || 'ring-gray-500'
-  },
+
 
   mounted() {
     this.caricaProfilo()
+    //testing
+    const role = this.user?.authority
+    console.log('Ruolo:', role)
   },
 
   methods: {
+
+    handleImageError(event) {
+      console.warn('Immagine non trovata, uso fallback')
+      event.target.src = user // Usa immagine default
+    },
+
     async caricaProfilo() {
       this.loading = true
 

@@ -104,6 +104,8 @@ x          <img src="../public/logo-esteso.png" alt="logo" class="h-10 w-auto ob
 </template>
 
 <script>
+import {post} from "@/service/api.js";
+
 export default {
   name: 'NavBar',
 
@@ -113,6 +115,7 @@ export default {
     }
   },
   computed:{
+
     userData(){
       const user = localStorage.getItem('user');
       return user?JSON.parse(user):null;
@@ -125,8 +128,9 @@ export default {
       // return !!this.userData;
     },
 
+    //testing
     userEmail(){
-      return this.userData?.email || '';
+      return this.userData?.email || 'riccardo04naps@gmail.com';
     },
 
     userAuthority(){
@@ -152,19 +156,26 @@ export default {
   },
   methods:{
     //logout
-    logout(){
-      fetch('http://localhost:3000/auth/logout', {
-        method: 'POST',
-        credentials: "include"
-      }).finally(()=>{
-        localStorage.removeItem('user');
-        localStorage.removeItem('userAuthority');
-        localStorage.removeItem('token');
+    async logout() {
+      try {
+        // Chiamata al backend usando la funzione post
+        await post('/auth/logout')
+        console.log('Logout effettuato con successo')
+      } catch (error) {
+        console.error('Errore durante il logout:', error)
+        // Anche se c'è un errore, procedi comunque con il logout locale
+      } finally {
+        // Pulisci i dati locali in ogni caso
+        localStorage.removeItem('user')
+        localStorage.removeItem('userAuthority')
+        localStorage.removeItem('token')
 
-        this.$router.push('mappa');
+        // Reindirizza alla mappa
+        this.$router.push('/map')
 
-        window.dispatchEvent(new CustomEvent('auth-logout'));
-      });
+        // Notifica gli altri componenti del logout
+        window.dispatchEvent(new CustomEvent('auth-logout'))
+      }
     },
 
     getUserRoleName() {
