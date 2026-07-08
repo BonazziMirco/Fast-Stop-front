@@ -81,9 +81,9 @@ x          <img src="../public/logo-esteso.png" alt="logo" class="h-10 w-auto ob
 
             <!-- Login/Signin per non loggati -->
 
-            <!--        da aggiungere v-else-->
 
-            <template>
+
+            <template v-else>
               <router-link
                   to="/login"
                   class="px-4 py-2 text-red-600 bg-red-50 border border-red-300 rounded-lg hover:bg-red-100 hover:border-red-400 transition-all duration-200 text-sm font-medium"
@@ -127,7 +127,7 @@ export default {
     //codice momentaneo per testare
 
     isLoggedIn(){
-      return true
+      return false
       // return !!this.userData;
     },
 
