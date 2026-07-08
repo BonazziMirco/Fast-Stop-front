@@ -80,7 +80,10 @@ x          <img src="../public/logo-esteso.png" alt="logo" class="h-10 w-auto ob
             </template>
 
             <!-- Login/Signin per non loggati -->
-            <template v-else>
+
+            <!--        da aggiungere v-else-->
+
+            <template>
               <router-link
                   to="/login"
                   class="px-4 py-2 text-red-600 bg-red-50 border border-red-300 rounded-lg hover:bg-red-100 hover:border-red-400 transition-all duration-200 text-sm font-medium"
