@@ -129,7 +129,7 @@ export default {
 
         // Reindirizza dopo 1.5 secondi
         setTimeout(() => {
-          this.$router.push('/');
+          this.$router.push('/profilo');
         }, 1500);
 
       } catch (err) {
