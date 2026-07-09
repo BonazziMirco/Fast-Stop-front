@@ -127,32 +127,28 @@ export default {
     //codice momentaneo per testare
 
     isLoggedIn(){
-      return false
-      // return !!this.userData;
+      return !!this.userData;
     },
 
     //testing
     userEmail(){
-      return this.userData?.email || 'riccardo04naps@gmail.com';
+      return this.userData?.email ;
     },
 
     userAuthority(){
-      return this.userData?.authority || 0;
+      return this.userData?.authority |;
     },
 
     isViewer(){
-      return true
-      // return this.isLoggedIn && this.userAuthority >=1;
+      return this.isLoggedIn && this.userAuthority >=1;
     },
 
     isOperator(){
-      return true
-      // return this.isLoggedIn && this.userAuthority >=2;
+      return this.isLoggedIn && this.userAuthority >=2;
     },
 
     isAdmin(){
-      return true
-      // return this.isLoggedIn && this.userAuthority >=3;
+      return this.isLoggedIn && this.userAuthority >=3;
     }
 
 
