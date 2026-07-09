@@ -119,6 +119,10 @@ export default {
           car_plate: data.user.car_plate || data.user.targa || ''
         }));
 
+        window.dispatchEvent(new CustomEvent('auth-login', {
+          detail: { user: data.user }
+        }));
+
         // Login riuscito
         this.success = true;
         console.log('Login riuscito:', data.user.authority);
