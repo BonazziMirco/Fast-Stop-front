@@ -136,7 +136,7 @@ export default {
     },
 
     userAuthority(){
-      return this.userData?.authority |;
+      return this.userData?.authority ;
     },
 
     isViewer(){
