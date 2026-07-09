@@ -4,7 +4,7 @@
       <div class="flex items-center justify-between h-16">
         <!-- Logo -->
         <div class="flex items-center flex-shrink-0">
-x          <img src="../public/logo-esteso.png" alt="logo" class="h-10 w-auto object-contain" />
+          <img src="../public/logo-esteso.png" alt="logo" class="h-10 w-auto object-contain" />
         </div>
 
         <div v-if="isLoggedIn" class="flex items-start gap-3">
@@ -169,11 +169,13 @@ export default {
         localStorage.removeItem('userAuthority')
         localStorage.removeItem('token')
 
-        // Reindirizza alla mappa
-        this.$router.push('/map')
+        this.user = null
 
         // Notifica gli altri componenti del logout
         window.dispatchEvent(new CustomEvent('auth-logout'))
+
+        // Reindirizza alla mappa
+        this.$router.push('/map')
       }
     },
 
@@ -186,17 +188,36 @@ export default {
       return 'Ospite'
     },
 
+    handleLogin() {
+      console.log('NavBar: Evento auth-login ricevuto');
+      this.user = this.userData;
+    },
+
+    // 🔥 Metodo per gestire l'evento di logout
+    handleLogout() {
+      console.log(' NavBar: Evento auth-logout ricevuto');
+      this.user = null;
+    }
+
 
   },
 
   created(){
-    window.addEventListener('auth-login', ()=>{
-      this.user = this.userData;
-    });
+    console.log('NavBar created');
 
-    window.addEventListener('auth-logout', ()=>{
-      this.user = null;
-    })
+    this.user = this.userData;
+
+    // Registra gli event listener
+    window.addEventListener('auth-login', this.handleLogin);
+    window.addEventListener('auth-logout', this.handleLogout);
+  },
+
+  //  AGGIUNTO: Cleanup degli event listener
+  beforeDestroy() {
+    console.log('NavBar beforeDestroy - Cleanup');
+    window.removeEventListener('auth-login', this.handleLogin);
+    window.removeEventListener('auth-logout', this.handleLogout);
   }
+
 }
 </script>

@@ -22,38 +22,23 @@ async function handleResponse(response) {
 
 // GET
 export async function get(endpoint) {
-    const token = localStorage.getItem('token');
-    const headers = {
-        'Content-Type': 'application/json',
-    };
-
-
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'GET',
-        headers: headers,
-        credentials: 'include'
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include' // IMPORTANTE: corrisponde a credentials: true nel CORS
     });
     return handleResponse(response);
 }
 
 // POST
 export async function post(endpoint, data) {
-    const token = localStorage.getItem('token');
-    const headers = {
-        'Content-Type': 'application/json',
-    };
-
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
-        headers:headers,
+        headers: {
+            'Content-Type': 'application/json',
+        },
         credentials: 'include',
         body: JSON.stringify(data)
     });
@@ -62,17 +47,11 @@ export async function post(endpoint, data) {
 
 // PUT
 export async function put(endpoint, data) {
-    const token = localStorage.getItem('token');
-    const headers = {
-        'Content-Type': 'application/json',
-    };
-
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'PUT',
-        headers: headers,
+        headers: {
+            'Content-Type': 'application/json',
+        },
         credentials: 'include',
         body: JSON.stringify(data)
     });
@@ -81,17 +60,11 @@ export async function put(endpoint, data) {
 
 //PATCH
 export async function patch(endpoint, data) {
-    const token = localStorage.getItem('token');
-    const headers = {
-        'Content-Type': 'application/json',
-    };
-
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'PATCH',
-        headers: headers,
+        headers: {
+            'Content-Type': 'application/json',
+        },
         credentials: 'include',
         body: JSON.stringify(data)
     });
@@ -100,17 +73,11 @@ export async function patch(endpoint, data) {
 
 // DELETE
 export async function del(endpoint) {
-    const token = localStorage.getItem('token');
-    const headers = {
-        'Content-Type': 'application/json',
-    };
-
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'DELETE',
-        headers: headers,
+        headers: {
+            'Content-Type': 'application/json',
+        },
         credentials: 'include'
     });
     return handleResponse(response);
