@@ -97,12 +97,16 @@ export default {
       this.success = false;
       this.loading = true;
 
+
+
       // Validazione base
       if (!this.email || !this.password) {
         this.error = ' Inserisci email e password';
         this.loading = false;
         return;
       }
+      //debug
+      console.log('📤 Tentativo login per:', this.email);
 
       try {
         // Chiamata API al backend
@@ -110,6 +114,11 @@ export default {
           email: this.email,
           password: this.password
         });
+        //debug
+        console.log('📥 RISPOSTA COMPLETA:', JSON.stringify(data, null, 2));
+        console.log('📥 Tipo di data:', typeof data);
+        console.log('📥 data.user esiste?', !!data.user);
+        console.log('📥 data.user:', data.user);
 
 
         // Salva dati utente
@@ -120,9 +129,17 @@ export default {
           car_plate: data.user.car_plate || data.user.targa || ''
         }));
 
+        //debug
+
+
+        // VERIFICA CHE SIA STATO SALVATO
+        console.log(' User salvato:', localStorage.getItem('user'));
+
         window.dispatchEvent(new CustomEvent('auth-login', {
           detail: { user: data.user }
         }));
+
+
 
         // Login riuscito
         this.success = true;
@@ -130,7 +147,7 @@ export default {
 
         // Reindirizza dopo 1.5 secondi
         setTimeout(() => {
-          this.$router.push('/profilo');
+          this.$router.push('/');
         }, 1500);
 
       } catch (err) {
