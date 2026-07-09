@@ -91,13 +91,13 @@ export default {
     }
   },
   methods: {
+    // LoginView.vue - Modifica SOLO il metodo handleLogin
+
     async handleLogin() {
       // Reset stati
       this.error = null;
       this.success = false;
       this.loading = true;
-
-
 
       // Validazione base
       if (!this.email || !this.password) {
@@ -105,21 +105,16 @@ export default {
         this.loading = false;
         return;
       }
-      //debug
-      console.log('📤 Tentativo login per:', this.email);
+
+      console.log('Tentativo login per:', this.email);
 
       try {
-        // Chiamata API al backend
         const data = await post('/auth/login', {
           email: this.email,
           password: this.password
         });
-        //debug
-        console.log('📥 RISPOSTA COMPLETA:', JSON.stringify(data, null, 2));
-        console.log('📥 Tipo di data:', typeof data);
-        console.log('📥 data.user esiste?', !!data.user);
-        console.log('📥 data.user:', data.user);
 
+        console.log(' RISPOSTA COMPLETA:', data);
 
         // Salva dati utente
         localStorage.setItem('user', JSON.stringify({
@@ -129,17 +124,12 @@ export default {
           car_plate: data.user.car_plate || data.user.targa || ''
         }));
 
-        //debug
-
-
-        // VERIFICA CHE SIA STATO SALVATO
         console.log(' User salvato:', localStorage.getItem('user'));
 
+        // EMETTI L'EVENTO DI LOGIN - QUESTO È FONDAMENTALE!
         window.dispatchEvent(new CustomEvent('auth-login', {
           detail: { user: data.user }
         }));
-
-
 
         // Login riuscito
         this.success = true;
@@ -147,11 +137,11 @@ export default {
 
         // Reindirizza dopo 1.5 secondi
         setTimeout(() => {
-          this.$router.push('/');
+          this.$router.push('/map'); // VAI DIRETTAMENTE A /map
         }, 1500);
 
       } catch (err) {
-        // Gestione errori
+        // Gestione errori (invariata)
         switch(err.status) {
           case 400:
             this.error = ' Email o password non corretti. Riprova.';

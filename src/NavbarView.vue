@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-white border border-blue-900 rounded-xl mx-4 my-3 shadow-sm">
+  <nav class="flex bg-white border border-blue-900 rounded-xl mx-4 my-3 shadow-sm">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
         <!-- Logo -->
@@ -117,11 +117,13 @@ export default {
       user: null
     }
   },
+
   computed:{
 
+
     userData(){
-      const user = localStorage.getItem('user');
-      return user?JSON.parse(user):null;
+      const userData = localStorage.getItem('user');
+      return userData?JSON.parse(userData):null;
     },
 
     //codice momentaneo per testare
@@ -153,6 +155,7 @@ export default {
 
 
   },
+
   methods:{
     //logout
     async logout() {
@@ -188,15 +191,13 @@ export default {
       return 'Ospite'
     },
 
-    handleLogin() {
-      console.log('NavBar: Evento auth-login ricevuto');
-      this.user = this.userData;
+    handleLogin(event) {
+      console.log('NavBar: Evento auth-login ricevuto', event.detail);
     },
 
-    // 🔥 Metodo per gestire l'evento di logout
+    //  Metodo per gestire l'evento di logout
     handleLogout() {
       console.log(' NavBar: Evento auth-logout ricevuto');
-      this.user = null;
     }
 
 
@@ -205,7 +206,8 @@ export default {
   created(){
     console.log('NavBar created');
 
-    this.user = this.userData;
+    const userData = localStorage.getItem('user');
+    this.user = userData ? JSON.parse(userData):null;
 
     // Registra gli event listener
     window.addEventListener('auth-login', this.handleLogin);
