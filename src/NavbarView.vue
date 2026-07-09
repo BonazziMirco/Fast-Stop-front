@@ -186,15 +186,17 @@ export default {
       return 'Ospite'
     },
 
-    created(){
-      window.addEventListener('auth.login', ()=>{
-        this.user = this.userData;
-      });
 
-      window.addEventListener('auth-logout', ()=>{
-        this.user = null;
-      })
-    }
+  },
+
+  created(){
+    window.addEventListener('auth-login', ()=>{
+      this.user = this.userData;
+    });
+
+    window.addEventListener('auth-logout', ()=>{
+      this.user = null;
+    })
   }
 }
 </script>
