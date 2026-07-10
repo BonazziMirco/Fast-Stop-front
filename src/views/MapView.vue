@@ -188,7 +188,7 @@ export default {
     async loadLots() {
       this.loading = true
       try {
-        const data = await get(`/zones/${this.selectedZoneId}/lots`)
+        const data = await get(`/parkings/zones/${this.selectedZoneId}/lots`)
         this.lots = data.lots || data
 
         if (this.lots.length > 0) {
