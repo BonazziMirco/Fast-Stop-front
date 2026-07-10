@@ -209,14 +209,20 @@ export default {
             }
           } catch (error) {
             console.log(`Errore zona ${zoneId}:`, error)
+
           }
         }
 
         console.log('Parcheggi caricati:', this.lots.length)
 
       } catch (error) {
-        console.error(error)
-        this.message = 'Errore durante il caricamento dei parcheggi'
+        if (error.status === 401) {
+          alert('Sessione scaduta. Riaccedi.')
+          localStorage.removeItem('user')
+          localStorage.removeItem('authority')
+          localStorage.removeItem('token')
+          this.$router.push('/login')
+        }
       } finally {
         this.loading = false
       }

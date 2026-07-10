@@ -118,6 +118,13 @@ export default {
       }catch(error){
         console.error('Error occured',error)
         this.message=error||'errore durante la creazione'
+        if (error.status === 401) {
+          alert('Sessione scaduta. Riaccedi.')
+          localStorage.removeItem('user')
+          localStorage.removeItem('authority')
+          localStorage.removeItem('token')
+          this.$router.push('/login')
+        }
       }finally{
         this.loading = false
       }

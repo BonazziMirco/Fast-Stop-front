@@ -296,6 +296,8 @@ export default {
         if (error.status === 401) {
           alert('Sessione scaduta. Riaccedi.')
           localStorage.removeItem('user')
+          localStorage.removeItem('authority')
+          localStorage.removeItem('token')
           this.$router.push('/login')
         } else {
           alert(error.message || 'Errore nel caricamento del profilo')

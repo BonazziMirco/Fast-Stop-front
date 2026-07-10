@@ -114,7 +114,8 @@ export default {
 
   data(){
     return {
-      user: null
+      user: null,
+      sessionCheckInterval: null
     }
   },
 
@@ -129,7 +130,7 @@ export default {
     //codice momentaneo per testare
 
     isLoggedIn(){
-      return !!this.userData;
+      return !!this.userData && !!localStorage.getItem('token');
     },
 
     //testing
@@ -159,28 +160,104 @@ export default {
   methods:{
     //logout
     async logout() {
+      await this.performLogout(false);
+    },
+
+    async checkSessionValidity() {
+      if (!!this.isLoggedIn) return;
+
       try {
-        // Chiamata al backend usando la funzione post
-        await post('/auth/logout')
-        console.log('Logout effettuato con successo')
+        const response = await post('/auth/check-session', {});
+
+      }catch (error) {
+        console.error('Errore durante il check della sessione:', error);
+        // Se c'è un errore (es. 401), considera la sessione scaduta
+        if (error.response && error.response.status === 401) {
+          this.handleSessionExpired();
+        }
+      }
+
+    },
+
+    handleSessionExpired() {
+      console.log('Sessione scaduta - eseguo logout automatico');
+      this.performLogout(true); // true = sessione scaduta
+    },
+
+    //  Metodo unificato per il logout
+    async performLogout(isSessionExpired = false) {
+      try {
+        // Se non è una sessione scaduta, chiama il backend
+        if (!isSessionExpired) {
+          await post('/auth/logout');
+          console.log('Logout effettuato con successo');
+        }
       } catch (error) {
-        console.error('Errore durante il logout:', error)
-        // Anche se c'è un errore, procedi comunque con il logout locale
+        console.error('Errore durante il logout:', error);
       } finally {
         // Pulisci i dati locali in ogni caso
-        localStorage.removeItem('user')
-        localStorage.removeItem('userAuthority')
-        localStorage.removeItem('token')
+        localStorage.removeItem('user');
+        localStorage.removeItem('userAuthority');
+        localStorage.removeItem('token');
 
-        this.user = null
+        this.user = null;
 
         // Notifica gli altri componenti del logout
-        window.dispatchEvent(new CustomEvent('auth-logout'))
+        window.dispatchEvent(new CustomEvent('auth-logout', {
+          detail: { sessionExpired: isSessionExpired }
+        }));
 
-        // Reindirizza alla mappa
-        this.$router.push('/map')
+        // Se la sessione è scaduta, mostra un messaggio all'utente
+        if (isSessionExpired) {
+          alert('La tua sessione è scaduta. Effettua nuovamente il login.');
+        }
+
+        // Reindirizza alla mappa se non è già sulla pagina di login
+        if (this.$route.path !== '/login' && this.$route.path !== '/signin') {
+          this.$router.push('/map');
+        }
       }
     },
+
+    //  Avvia il controllo periodico della sessione
+    startSessionCheck() {
+      this.stopSessionCheck(); // Pulisci eventuali interval precedenti
+
+      // Controlla ogni 30 secondi se la sessione è ancora valida
+      this.sessionCheckInterval = setInterval(() => {
+        this.checkSessionValidity();
+      }, 30000); // 30 secondi
+    },
+
+    //  Ferma il controllo periodico della sessione
+    stopSessionCheck() {
+      if (this.sessionCheckInterval) {
+        clearInterval(this.sessionCheckInterval);
+        this.sessionCheckInterval = null;
+      }
+    },
+
+    //  Forza un controllo immediato della sessione
+    forceSessionCheck() {
+      this.checkSessionValidity();
+    },
+
+    //  Aggiorna handleLogin
+    handleLogin(event) {
+      console.log('NavBar: Evento auth-login ricevuto', event.detail);
+      this.user = this.userData;
+      // Riavvia il check della sessione
+      this.startSessionCheck();
+    },
+
+    // Aggiorna handleLogout
+    handleLogout() {
+      console.log('NavBar: Evento auth-logout ricevuto');
+      this.user = null;
+      // Ferma il check della sessione
+      this.stopSessionCheck();
+    },
+
 
     getUserRoleName() {
       const authority = this.userAuthority;
@@ -191,14 +268,6 @@ export default {
       return 'Ospite'
     },
 
-    handleLogin(event) {
-      console.log('NavBar: Evento auth-login ricevuto', event.detail);
-    },
-
-    //  Metodo per gestire l'evento di logout
-    handleLogout() {
-      console.log(' NavBar: Evento auth-logout ricevuto');
-    }
 
 
   },
@@ -212,6 +281,12 @@ export default {
     // Registra gli event listener
     window.addEventListener('auth-login', this.handleLogin);
     window.addEventListener('auth-logout', this.handleLogout);
+
+    if (this.isLoggedIn) {
+      this.startSessionCheck();
+
+      this.checkSessionValidity();
+    }
   },
 
   //  AGGIUNTO: Cleanup degli event listener
@@ -219,6 +294,8 @@ export default {
     console.log('NavBar beforeDestroy - Cleanup');
     window.removeEventListener('auth-login', this.handleLogin);
     window.removeEventListener('auth-logout', this.handleLogout);
+
+    this.stopSessionCheck();
   }
 
 }
