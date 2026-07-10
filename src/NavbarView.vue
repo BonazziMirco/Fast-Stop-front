@@ -164,7 +164,7 @@ export default {
     },
 
     async checkSessionValidity() {
-      if (!!this.isLoggedIn) return;
+      if (!this.isLoggedIn) return;
 
       try {
         const response = await post('/auth/check-session', {});
@@ -221,6 +221,10 @@ export default {
 
     //  Avvia il controllo periodico della sessione
     startSessionCheck() {
+
+      if(!this.isLoggedIn){
+        return;
+      }
       this.stopSessionCheck(); // Pulisci eventuali interval precedenti
 
       // Controlla ogni 30 secondi se la sessione è ancora valida

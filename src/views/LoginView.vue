@@ -136,9 +136,9 @@ export default {
         console.log('Login riuscito:', data.user.authority);
 
         // Reindirizza dopo 1.5 secondi
-        setTimeout(() => {
+        // setTimeout(() => {
           this.$router.push('/map'); // VAI DIRETTAMENTE A /map
-        }, 1500);
+        // }, 1500);
 
       } catch (err) {
         // Gestione errori (invariata)
