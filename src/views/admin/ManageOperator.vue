@@ -2,7 +2,7 @@
   <div class="max-w-6xl mx-auto p-6">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Gestione Operatori</h1>
+      <h1 class="text-2xl font-bold text-gray-800">Gestione Utenti</h1>
       <span class="text-sm text-gray-500">{{ filteredUsers.length }} operatori</span>
     </div>
 
@@ -107,12 +107,12 @@
             <td class="py-3 px-4 text-sm text-gray-700">{{ user.email }}</td>
             <td class="py-3 px-4">
                 <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getRoleClass(user.role)">
-                  {{ getRoleName(user.role) }}
+                  {{ getRoleName(user.authority) }}
                 </span>
             </td>
             <td class="py-3 px-4">
-                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="user.sospeso ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
-                  {{ user.sospeso ? 'Sospeso' : 'Attivo' }}
+                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="user.is_active ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
+                  {{ user.is_active ? 'Sospeso' : 'Attivo' }}
                 </span>
             </td>
           </tr>
@@ -216,13 +216,13 @@ export default {
       let result = [...this.users]
 
       if (this.filters.role) {
-        result = result.filter(user => user.role === this.filters.role)
+        result = result.filter(user => user.authority === this.filters.role)
       }
 
       if (this.filters.state === 'attivo') {
-        result = result.filter(user => !user.sospeso)
+        result = result.filter(user => user.is_active==='true')
       } else if (this.filters.state === 'sospeso') {
-        result = result.filter(user => user.sospeso)
+        result = result.filter(user => user.is_active==='false')
       }
 
       if (this.filters.email && this.filters.email.trim()) {
@@ -253,10 +253,10 @@ export default {
           try {
             const data = await get('/userManagement/users');
             this.users = data
-                .filter(user => user.role !== 3)
+                .filter(user => user.authority !== 3)
                 .map(user => ({
                   ...user,
-                  sospeso: user.sospeso || false
+                  sospeso: user.is_active || false
                 }));
 
             this.retryCount = 0;
