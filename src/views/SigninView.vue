@@ -152,7 +152,7 @@ export default {
 
       try{
 
-        const data = await post('/auth/signin', {email: this.email, password: this.password, targa:this.targa.toUpperCase().trim()});
+        const data = await post('/auth/register', {email: this.email, password: this.password, targa:this.targa.toUpperCase().trim()});
 
         this.success=true;
         console.log('Registrazione riuscita:', data);
