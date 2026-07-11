@@ -253,6 +253,7 @@ export default {
         this.selectedLot = null
       } else {
         this.selectedLot = lot
+        this.modify= true
       }
     },
 
