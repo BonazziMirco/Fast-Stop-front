@@ -28,14 +28,14 @@
           >
             <td class="py-3 px-4 text-sm text-gray-700 font-medium">{{ lot.name }}</td>
             <td class="py-3 px-4">
-                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getZoneClass(lot.zone)">
-                  Zona {{ lot.zone }}
+                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getZoneClass(lot.zoneId)">
+                  Zona {{ lot.zoneId }}
                 </span>
             </td>
-            <td class="py-3 px-4 text-sm text-gray-700">{{ lot.spots }}</td>
+            <td class="py-3 px-4 text-sm text-gray-700">{{ lot.availableSpots }}</td>
             <td class="py-3 px-4">
-                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="lot.state === 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                  {{ lot.state === 1 ? 'Aperto' : 'Chiuso' }}
+                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="!lot.state === 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                  {{ lot.state === 1 ? 'Chiuso' : 'Aperto' }}
                 </span>
             </td>
           </tr>
