@@ -112,7 +112,7 @@
             </td>
             <td class="py-3 px-4">
                 <span class="px-2 py-1 text-xs font-medium rounded-full" :class="user.is_active ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
-                  {{ user.is_active ? 'Sospeso' : 'Attivo'}}
+                  {{ user.is_active ? 'Attivo' : 'Sospeso'}}
                 </span>
             </td>
           </tr>
@@ -257,7 +257,7 @@ export default {
                 .map(user => ({
                   ...user,
                   is_active: user.is_active,
-                  sospeso: !user.is_active
+                  sospeso: user.is_active
                 }));
 
             this.retryCount = 0;
