@@ -29,7 +29,7 @@
             <td class="py-3 px-4 text-sm text-gray-700 font-medium">{{ lot.name }}</td>
             <td class="py-3 px-4">
                 <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getZoneClass(lot.zoneId)">
-                  Zona {{ lot.zoneId }}
+                  {{ lot.zoneId }}
                 </span>
             </td>
             <td class="py-3 px-4 text-sm text-gray-700">{{ lot.availableSpots }}</td>
@@ -113,9 +113,12 @@
                 :disabled="loading"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
             >
-              <option value="0">Zona 0</option>
-              <option value="1">Zona 1</option>
-              <option value="2">Zona 2</option>
+              <option value="Centro_Storico"> Centro Storico</option>
+              <option value="Zona_Piedicastello">Piedicastello</option>
+              <option value="Zona_Albere">Albere</option>
+              <option value="Bolghera">Bolghera</option>
+              <option value="Trento_Nord">Trento Nord</option>
+              <option value="San_Bartolomeo">San Bartolomeo</option>
             </select>
           </div>
 
@@ -263,8 +266,8 @@ export default {
       // Compila il form con i dati del parcheggio selezionato
       this.formData = {
         name: this.selectedLot.name || '',
-        zone: this.selectedLot.zone !== undefined ? String(this.selectedLot.zone) : '',
-        spots: this.selectedLot.spots || 0,
+        zone: this.selectedLot.zoneId !== undefined ? String(this.selectedLot.zoneId) : '',
+        spots: this.selectedLot.availableSpots || 0,
         state: this.selectedLot.state !== undefined ? this.selectedLot.state : 1,
       }
 
@@ -298,14 +301,14 @@ export default {
         if (this.formData.name !== this.originalData.name) {
           updates.name = this.formData.name
         }
-        if (Number(this.formData.spots) !== Number(this.originalData.spots)) {
-          updates.spots = Number(this.formData.spots)
+        if (Number(this.formData.availableSpots) !== Number(this.originalData.availableSpots)) {
+          updates.spots = Number(this.formData.availableSpots)
         }
         if (Number(this.formData.state) !== Number(this.originalData.state)) {
           updates.state = Number(this.formData.state)
         }
-        if (Number(this.formData.zone) !== Number(this.originalData.zone)) {
-          updates.zone = Number(this.formData.zone)
+        if (Number(this.formData.zoneId) !== Number(this.originalData.zoneId)) {
+          updates.zone = Number(this.formData.zoneId)
         }
 
         await patch(`/parking/${this.selectedLot.id}`, updates)
