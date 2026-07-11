@@ -257,7 +257,7 @@ export default {
                 .map(user => ({
                   ...user,
                   is_active: user.is_active,
-                  sospeso: user.is_active
+                  sospeso: !user.is_active
                 }));
 
             this.retryCount = 0;
