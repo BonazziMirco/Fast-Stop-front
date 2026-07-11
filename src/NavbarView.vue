@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import {post} from "@/service/api.js";
+import {post, head} from "@/service/api.js";
 
 export default {
   name: 'NavBar',
