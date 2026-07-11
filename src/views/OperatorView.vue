@@ -308,7 +308,7 @@ export default {
           updates.zone = Number(this.formData.zone)
         }
 
-        await patch(`/parkings/${this.selectedLot.id}`, updates)
+        await patch(`/parking/${this.selectedLot.id}`, updates)
 
         this.message = 'Parcheggio modificato con successo!'
         await this.uploadParking()
