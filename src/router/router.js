@@ -7,6 +7,7 @@ import ManageOperator from "@/views/admin/ManageOperator.vue";
 import AddOperator from "@/views/admin/AddOperator.vue";
 import AdminDashboard from "@/views/admin/AdminDashboard.vue";
 import OperatorView from "@/views/OperatorView.vue";
+import StatsView from "@/views/StatsView.vue";
 
 const routes = [
     {
@@ -32,6 +33,11 @@ const routes = [
        path: '/profilo',
        name: 'profile',
        component: ProfileView
+    },
+    {
+        path: '/stats',
+        name: 'stats',
+        component: StatsView
     },
     {
         path:'/admin',
