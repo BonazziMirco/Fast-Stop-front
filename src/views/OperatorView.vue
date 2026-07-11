@@ -6,6 +6,9 @@
       <span class="text-sm text-gray-500">{{ lots.length }} parcheggi</span>
     </div>
 
+<!--    filtro parcheggi da fare-->
+<!--    fare in modo che ogni volta che clicc0 altro il form scompare-->
+
     <!-- Tabella -->
     <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
       <div class="overflow-x-auto">

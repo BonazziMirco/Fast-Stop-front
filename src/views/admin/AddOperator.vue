@@ -5,6 +5,8 @@
        Aggiungi Operatore
     </h1>
 
+<!--    aggiungere la possibilità di mettere un ruolo-->
+
     <div class="bg-white rounded-xl shadow-md border border-gray-200 p-8">
       <div v-if="message" class="mb-6 p-4 rounded-lg" :class="typeof message === 'string' && message.includes('successo') ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'">
         {{ typeof message === 'string' ? message : 'Errore sconosciuto' }}
@@ -103,7 +105,7 @@ export default {
       }
       try{
         this.loading = true
-        await post('/register',{
+        await post('/auth/register',{
           email: this.email,
           password: this.password,
         })

@@ -366,15 +366,15 @@ export default {
       try {
         switch (this.pendingAction) {
           case 'suspend':
-            await patch(`/users/${this.selectedUser.id}/suspend`, { is_active: false });
+            await patch(`/userManagement/users/${this.selectedUser.id}`);
             operationMessage = `${this.selectedUser.email} sospeso con successo!`;
             break;
           case 'activate':
-            await patch(`/users/${this.selectedUser.id}/suspend`, { is_active: true });
+            await patch(`/userManagement/users/${this.selectedUser.id}`);
             operationMessage = `${this.selectedUser.email} riattivato con successo!`;
             break;
           case 'delete':
-            await del(`/users/${this.selectedUser.id}`);
+            await del(`/userManagement/users/${this.selectedUser.id}`);
             operationMessage = ` ${this.selectedUser.email} eliminato con successo!`;
             this.selectedUser = null;
             break;
