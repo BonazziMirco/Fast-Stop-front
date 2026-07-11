@@ -115,49 +115,107 @@ export default {
   data(){
     return {
       user: null,
-      sessionCheckInterval: null
+      sessionCheckInterval: null,
+      isLoggedIn: false,
+      userEmail: '',
+      userAuthority: 0,
+      isViewer: false,
+      isOperator: false,
+      isAdmin: false
     }
   },
 
-  computed:{
-
-
-    userData(){
-      const userData = localStorage.getItem('user');
-      return userData?JSON.parse(userData):null;
-    },
-
-    //codice momentaneo per testare
-
-    isLoggedIn(){
-      return !!this.userData && !!localStorage.getItem('token');
-    },
-
-    //testing
-    userEmail(){
-      return this.userData?.email ;
-    },
-
-    userAuthority(){
-      return this.userData?.authority ;
-    },
-
-    isViewer(){
-      return this.isLoggedIn && this.userAuthority >=1;
-    },
-
-    isOperator(){
-      return this.isLoggedIn && this.userAuthority >=2;
-    },
-
-    isAdmin(){
-      return this.isLoggedIn && this.userAuthority >=3;
-    }
-
-
-  },
+  // computed:{
+  //
+  //
+  //   userData(){
+  //     const userData = localStorage.getItem('user');
+  //     return userData?JSON.parse(userData):null;
+  //   },
+  //
+  //   //codice momentaneo per testare
+  //
+  //   isLoggedIn(){
+  //     return !!this.userData && !!localStorage.getItem('token');
+  //   },
+  //
+  //   //testing
+  //   userEmail(){
+  //     return this.userData?.email ;
+  //   },
+  //
+  //   userAuthority(){
+  //     return this.userData?.authority ;
+  //   },
+  //
+  //   isViewer(){
+  //     return this.isLoggedIn && this.userAuthority >=1;
+  //   },
+  //
+  //   isOperator(){
+  //     return this.isLoggedIn && this.userAuthority >=2;
+  //   },
+  //
+  //   isAdmin(){
+  //     return this.isLoggedIn && this.userAuthority >=3;
+  //   }
+  //
+  //
+  // },
 
   methods:{
+    updateUserData() {
+      console.log('NavBar: updateUserData called');
+
+      const token = localStorage.getItem('token');
+      const userDataStr = localStorage.getItem('user');
+
+      if (userDataStr && token) {
+        try {
+          const userData = JSON.parse(userDataStr);
+          const authority = userData.authority || 0;
+
+          this.user = userData;
+          this.isLoggedIn = true;
+          this.userEmail = userData.email || '';
+          this.userAuthority = authority;
+          this.isViewer = authority >= 1;
+          this.isOperator = authority >= 2;
+          this.isAdmin = authority >= 3;
+
+          console.log('NavBar: User data updated', {
+            email: this.userEmail,
+            authority: this.userAuthority
+          });
+
+          // Avvia il controllo sessione
+          this.startSessionCheck();
+        } catch (e) {
+          console.error('NavBar: Error parsing user data', e);
+          this.clearUserData();
+        }
+      } else {
+        this.clearUserData();
+      }
+    },
+
+    clearUserData() {
+      this.user = null;
+      this.isLoggedIn = false;
+      this.userEmail = '';
+      this.userAuthority = 0;
+      this.isViewer = false;
+      this.isOperator = false;
+      this.isAdmin = false;
+      this.stopSessionCheck();
+      console.log('NavBar: User data cleared');
+    },
+
+    forceRefresh() {
+      console.log('NavBar: Force refresh');
+      // Forza il ricalcolo delle computed properties
+      this.updateUserData();
+    },
     //logout
     async logout() {
       await this.performLogout(false);
@@ -249,27 +307,22 @@ export default {
     //  Aggiorna handleLogin
     handleLogin(event) {
       console.log('NavBar: Evento auth-login ricevuto', event.detail);
-      this.user = this.userData;
       // Riavvia il check della sessione
-      this.startSessionCheck();
+      this.updateUserData()
     },
 
     // Aggiorna handleLogout
     handleLogout() {
       console.log('NavBar: Evento auth-logout ricevuto');
-      this.user = null;
       // Ferma il check della sessione
-      this.stopSessionCheck();
+      this.clearUserData();
     },
 
-
-    getUserRoleName() {
-      const authority = this.userAuthority;
-      if (authority >= 3) return 'Admin';
-      if (authority >= 2) return 'Operator';
-      if (authority >= 1) return 'Viewer';
-      if (authority >= 0) return 'User';
-      return 'Ospite'
+    handleStorageChange(event) {
+      if (event.key === 'user' || event.key === 'token') {
+        console.log('NavBar: Storage changed:', event.key);
+        this.updateUserData();
+      }
     },
 
 
@@ -278,16 +331,14 @@ export default {
 
   created(){
     console.log('NavBar created');
-
-    const userData = localStorage.getItem('user');
-    this.user = userData ? JSON.parse(userData):null;
+    this.updateUserData();
 
     // Registra gli event listener
     window.addEventListener('auth-login', this.handleLogin);
     window.addEventListener('auth-logout', this.handleLogout);
+    window.addEventListener('storage', this.handleStorageChange);
 
     if (this.isLoggedIn) {
-      this.startSessionCheck();
 
       this.checkSessionValidity();
     }
@@ -298,6 +349,7 @@ export default {
     console.log('NavBar beforeDestroy - Cleanup');
     window.removeEventListener('auth-login', this.handleLogin);
     window.removeEventListener('auth-logout', this.handleLogout);
+    window.removeEventListener('storage', this.handleStorageChange);
 
     this.stopSessionCheck();
   }

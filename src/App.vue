@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <NavBar :key="navbarKey" />
+    <NavBar ref="navbar" />
     <main>
       <router-view @auth-error="handleAuthError" />
     </main>
@@ -15,38 +15,27 @@ export default {
   components: {
     NavBar
   },
-  data() {
-    return {
-      navbarKey: 0
-    }
-  },
   methods: {
     refreshNavbar() {
       console.log('App: Refresh Navbar');
-      this.navbarKey++;
+      if (this.$refs.navbar) {
+        this.$refs.navbar.forceRefresh();
+      }
     },
 
     handleAuthError(error) {
       console.log('App: Errore di autenticazione ricevuto', error);
       if (error && error.response && error.response.status === 401) {
-        // Forza il refresh della navbar
         this.refreshNavbar();
       }
     }
   },
   mounted() {
     // Ascolta gli eventi di login/logout
-    window.addEventListener('auth-login', () => {
-      console.log('App: Evento auth-login ricevuto');
-      this.refreshNavbar();
-    });
+    window.addEventListener('auth-login', this.refreshNavbar);
+    window.addEventListener('auth-logout', this.refreshNavbar);
 
-    window.addEventListener('auth-logout', () => {
-      console.log('App: Evento auth-logout ricevuto');
-      this.refreshNavbar();
-    });
-
-    // Ascolta anche i cambiamenti del localStorage
+    // Ascolta cambiamenti localStorage
     window.addEventListener('storage', (e) => {
       if (e.key === 'user' || e.key === 'token') {
         console.log('App: Storage cambiato, refresh Navbar');
@@ -57,7 +46,6 @@ export default {
   beforeDestroy() {
     window.removeEventListener('auth-login', this.refreshNavbar);
     window.removeEventListener('auth-logout', this.refreshNavbar);
-    window.removeEventListener('storage', this.refreshNavbar);
   }
 }
 </script>
