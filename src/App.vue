@@ -18,9 +18,12 @@ export default {
   methods: {
     refreshNavbar() {
       console.log('App: Refresh Navbar');
-      if (this.$refs.navbar) {
-        this.$refs.navbar.forceRefresh();
-      }
+      // Usa $nextTick per assicurarti che il DOM sia aggiornato
+      this.$nextTick(() => {
+        if (this.$refs.navbar) {
+          this.$refs.navbar.forceRefresh();
+        }
+      });
     },
 
     handleAuthError(error) {
@@ -31,16 +34,19 @@ export default {
     }
   },
   mounted() {
-    // Ascolta gli eventi di login/logout
-    window.addEventListener('auth-login', this.refreshNavbar);
-    window.addEventListener('auth-logout', this.refreshNavbar);
+    // Usa $nextTick per gli event listener
+    this.$nextTick(() => {
+      // Ascolta gli eventi di login/logout
+      window.addEventListener('auth-login', this.refreshNavbar);
+      window.addEventListener('auth-logout', this.refreshNavbar);
 
-    // Ascolta cambiamenti localStorage
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'user' || e.key === 'token') {
-        console.log('App: Storage cambiato, refresh Navbar');
-        this.refreshNavbar();
-      }
+      // Ascolta cambiamenti localStorage
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'user' || e.key === 'token') {
+          console.log('App: Storage cambiato, refresh Navbar');
+          this.refreshNavbar();
+        }
+      });
     });
   },
   beforeDestroy() {
