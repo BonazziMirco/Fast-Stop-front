@@ -106,7 +106,7 @@
           >
             <td class="py-3 px-4 text-sm text-gray-700">{{ user.email }}</td>
             <td class="py-3 px-4">
-                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getRoleClass(user.role)">
+                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getRoleClass(user.authority)">
                   {{ getRoleName(user.authority) }}
                 </span>
             </td>
@@ -256,7 +256,8 @@ export default {
                 .filter(user => user.authority !== 3)
                 .map(user => ({
                   ...user,
-                  sospeso: user.is_active || false
+                  is_active: user.is_active,
+                  sospeso: !user.is_active
                 }));
 
             this.retryCount = 0;
@@ -365,11 +366,11 @@ export default {
       try {
         switch (this.pendingAction) {
           case 'suspend':
-            await patch(`/users/${this.selectedUser.id}/suspend`, { sospeso: true });
+            await patch(`/users/${this.selectedUser.id}/suspend`, { is_active: false });
             operationMessage = `${this.selectedUser.email} sospeso con successo!`;
             break;
           case 'activate':
-            await patch(`/users/${this.selectedUser.id}/suspend`, { sospeso: false });
+            await patch(`/users/${this.selectedUser.id}/suspend`, { is_active: true });
             operationMessage = `${this.selectedUser.email} riattivato con successo!`;
             break;
           case 'delete':
