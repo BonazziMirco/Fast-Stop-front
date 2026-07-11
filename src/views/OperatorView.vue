@@ -213,7 +213,7 @@ export default {
       this.lots = []
 
       try {
-        const data = await get('/parkings/lots')
+        const data = await get('/parking/lots')
 
         if (Array.isArray(data)) {
           this.lots = data
