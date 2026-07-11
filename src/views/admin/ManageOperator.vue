@@ -112,7 +112,7 @@
             </td>
             <td class="py-3 px-4">
                 <span class="px-2 py-1 text-xs font-medium rounded-full" :class="user.is_active ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
-                  {{ user.is_active ? 'Sospeso' : 'Attivo' }}
+                  {{ user.is_active ? 'Attivo' : 'Sospeso' }}
                 </span>
             </td>
           </tr>
@@ -220,9 +220,9 @@ export default {
       }
 
       if (this.filters.state === 'attivo') {
-        result = result.filter(user => user.is_active==='true')
+        result = result.filter(user => user.is_active=== true)
       } else if (this.filters.state === 'sospeso') {
-        result = result.filter(user => user.is_active==='false')
+        result = result.filter(user => user.is_active=== false)
       }
 
       if (this.filters.email && this.filters.email.trim()) {
