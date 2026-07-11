@@ -191,6 +191,7 @@ export default {
       selectedUser: null,
       loading: false,
       message: '',
+      messageTimer: null,
 
       // Popup conferma
       showConfirm: false,
@@ -204,6 +205,9 @@ export default {
         state: '',
         email: '',
       },
+
+      fetchTimeout: null,
+      retryCount: 0,
     }
   },
 
@@ -211,19 +215,16 @@ export default {
     filteredUsers() {
       let result = [...this.users]
 
-      // Filtro per ruolo
       if (this.filters.role) {
         result = result.filter(user => user.role === this.filters.role)
       }
 
-      // Filtro per stato
       if (this.filters.state === 'attivo') {
         result = result.filter(user => !user.sospeso)
       } else if (this.filters.state === 'sospeso') {
         result = result.filter(user => user.sospeso)
       }
 
-      // Filtro per email
       if (this.filters.email && this.filters.email.trim()) {
         const searchTerm = this.filters.email.toLowerCase().trim()
         result = result.filter(user => user.email.toLowerCase().includes(searchTerm))
@@ -239,100 +240,168 @@ export default {
 
   methods: {
     async createTable() {
-      this.loading = true
-      this.message = null
-
-      try {
-        const data = await get('/userManagement/users')
-        this.users = data
-            .filter(user => user.role !== 3)
-            .map(user => ({
-              ...user,
-              sospeso: user.sospeso || false
-            }))
-      } catch (error) {
-        console.error(error)
-        this.message = error?.message || 'Errore durante il caricamento'
-        if (error.status === 401) {
-          alert('Sessione scaduta. Riaccedi.')
-          localStorage.removeItem('user')
-          localStorage.removeItem('authority')
-          localStorage.removeItem('token')
-          this.$router.push('/login')
-        }
-      } finally {
-        this.loading = false
+      if (this.fetchTimeout) {
+        clearTimeout(this.fetchTimeout);
+        this.fetchTimeout = null;
       }
+
+      return new Promise((resolve, reject) => {
+        this.fetchTimeout = setTimeout(async () => {
+          this.loading = true;
+          this.message = null;
+
+          try {
+            const data = await get('/userManagement/users');
+            this.users = data
+                .filter(user => user.role !== 3)
+                .map(user => ({
+                  ...user,
+                  sospeso: user.sospeso || false
+                }));
+
+            this.retryCount = 0;
+            resolve(data);
+
+          } catch (error) {
+            console.error('Errore nel caricamento:', error);
+            this.handleApiError(error);
+            reject(error);
+          } finally {
+            this.loading = false;
+            this.fetchTimeout = null;
+          }
+        }, 300);
+      });
+    },
+
+    handleApiError(error) {
+      console.error('API Error:', error);
+
+      if (error.status === 429) {
+        if (this.retryCount >= 3) {
+          this.message = 'Troppe richieste al server. Riprova più tardi.';
+          this.retryCount = 0;
+          return;
+        }
+
+        this.retryCount++;
+        const delay = Math.min(3000 * this.retryCount, 10000); // 3s, 6s, 9s
+        this.message = `Troppe richieste. Nuovo tentativo tra ${delay/1000} secondi...`;
+
+        setTimeout(() => {
+          this.createTable();
+        }, delay);
+
+      } else if (error.status === 401) {
+        this.message = 'Sessione scaduta. Riaccedi.';
+        localStorage.removeItem('user');
+        localStorage.removeItem('authority');
+        localStorage.removeItem('token');
+        setTimeout(() => {
+          this.$router.push('/login');
+        }, 1000);
+
+      } else if (error.status === 404) {
+        this.message = 'Risorsa non trovata.';
+
+      } else if (error.status === 500) {
+        this.message = 'Errore del server. Riprova più tardi.';
+
+      } else {
+        this.message = error?.message || 'Errore durante il caricamento';
+      }
+
+      //  Auto-cancella il messaggio dopo 5 secondi (se non è un retry)
+      if (error.status !== 429) {
+        this.clearMessageAfterDelay();
+      }
+    },
+
+    // per cancellare il messaggio dopo un delay
+    clearMessageAfterDelay() {
+      if (this.messageTimer) {
+        clearTimeout(this.messageTimer);
+        this.messageTimer = null;
+      }
+      this.messageTimer = setTimeout(() => {
+        this.message = null;
+      }, 5000);
     },
 
     selectUser(user) {
       if (this.selectedUser && this.selectedUser.id === user.id) {
-        this.selectedUser = null
+        this.selectedUser = null;
       } else {
-        this.selectedUser = user
+        this.selectedUser = user;
       }
     },
 
     sospendi() {
-      if (!this.selectedUser) return
-      this.confirmMessage = `Sospendere ${this.selectedUser.email}?`
-      this.pendingAction = 'suspend'
-      this.showConfirm = true
+      if (!this.selectedUser) return;
+      this.confirmMessage = `Sospendere ${this.selectedUser.email}?`;
+      this.pendingAction = 'suspend';
+      this.showConfirm = true;
     },
 
     riattiva() {
-      if (!this.selectedUser) return
-      this.confirmMessage = `Riattivare ${this.selectedUser.email}?`
-      this.pendingAction = 'activate'
-      this.showConfirm = true
+      if (!this.selectedUser) return;
+      this.confirmMessage = `Riattivare ${this.selectedUser.email}?`;
+      this.pendingAction = 'activate';
+      this.showConfirm = true;
     },
 
     elimina() {
-      if (!this.selectedUser) return
-      this.confirmMessage = `Eliminare definitivamente ${this.selectedUser.email}? Questa azione è irreversibile.`
-      this.pendingAction = 'delete'
-      this.showConfirm = true
+      if (!this.selectedUser) return;
+      this.confirmMessage = `Eliminare definitivamente ${this.selectedUser.email}? Questa azione è irreversibile.`;
+      this.pendingAction = 'delete';
+      this.showConfirm = true;
     },
 
     async confirm() {
-      this.showConfirm = false
-      this.loading = true
+      this.showConfirm = false;
+      this.loading = true;
+      let operationMessage = '';
 
       try {
         switch (this.pendingAction) {
           case 'suspend':
-            await patch(`/users/${this.selectedUser.id}/suspend`, { sospeso: true })
-            this.message = ` ${this.selectedUser.email} sospeso con successo!`
-            break
+            await patch(`/users/${this.selectedUser.id}/suspend`, { sospeso: true });
+            operationMessage = `${this.selectedUser.email} sospeso con successo!`;
+            break;
           case 'activate':
-            await patch(`/users/${this.selectedUser.id}/suspend`, { sospeso: false })
-            this.message = ` ${this.selectedUser.email} riattivato con successo!`
-            break
+            await patch(`/users/${this.selectedUser.id}/suspend`, { sospeso: false });
+            operationMessage = `${this.selectedUser.email} riattivato con successo!`;
+            break;
           case 'delete':
-            await del(`/users/${this.selectedUser.id}`)
-            this.message = ` ${this.selectedUser.email} eliminato con successo!`
-            this.selectedUser = null
-            break
+            await del(`/users/${this.selectedUser.id}`);
+            operationMessage = ` ${this.selectedUser.email} eliminato con successo!`;
+            this.selectedUser = null;
+            break;
         }
 
-        await this.createTable()
+        this.message = operationMessage;
 
-        setTimeout(() => {
-          this.message = null
-        }, 5000)
+        // Aspetta 1 secondo prima di ricaricare
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Ricarica la tabella
+        await this.createTable();
+
+        // Cancella il messaggio dopo 5 secondi
+        this.clearMessageAfterDelay();
 
       } catch (error) {
-        console.error(error)
-        this.message = error?.message || ' Errore durante l\'operazione'
+        console.error('Errore durante l\'operazione:', error);
+        this.handleApiError(error);
       } finally {
-        this.loading = false
-        this.pendingAction = null
+        this.loading = false;
+        this.pendingAction = null;
       }
     },
 
     back() {
-      this.showConfirm = false
-      this.pendingAction = null
+      this.showConfirm = false;
+      this.pendingAction = null;
     },
 
     getRoleName(role) {
@@ -341,8 +410,8 @@ export default {
         1: 'Viewer',
         2: 'Operator',
         3: 'Admin'
-      }
-      return roles[role] || role
+      };
+      return roles[role] || role;
     },
 
     getRoleClass(role) {
@@ -351,20 +420,20 @@ export default {
         1: 'bg-blue-100 text-blue-700',
         2: 'bg-purple-100 text-purple-700',
         3: 'bg-red-100 text-red-700'
-      }
-      return classes[role] || 'bg-gray-100 text-gray-700'
+      };
+      return classes[role] || 'bg-gray-100 text-gray-700';
     },
 
     filterOpen() {
-      this.showFilterPopUp = true
+      this.showFilterPopUp = true;
     },
 
     filterClose() {
-      this.showFilterPopUp = false
+      this.showFilterPopUp = false;
     },
 
     filterApply() {
-      this.showFilterPopUp = false
+      this.showFilterPopUp = false;
     },
 
     filterReset() {
@@ -372,7 +441,18 @@ export default {
         role: '',
         state: '',
         email: '',
-      }
+      };
+    },
+  },
+
+  beforeDestroy() {
+    if (this.fetchTimeout) {
+      clearTimeout(this.fetchTimeout);
+      this.fetchTimeout = null;
+    }
+    if (this.messageTimer) {
+      clearTimeout(this.messageTimer);
+      this.messageTimer = null;
     }
   }
 }
