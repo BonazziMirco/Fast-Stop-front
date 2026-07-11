@@ -158,13 +158,16 @@ export default {
 
           // Avvia il controllo sessione
           this.startSessionCheck();
+          return true;
         } catch (e) {
           console.error('NavBar: Error parsing user data', e);
           this.clearUserData();
+          return false;
         }
       } else {
         console.log('NavBar: No user data found, clearing');
         this.clearUserData();
+        return false;
       }
     },
 
@@ -263,16 +266,38 @@ export default {
       this.checkSessionValidity();
     },
 
-    // ✅ MODIFICATO: Usa setTimeout per dare tempo al localStorage di aggiornarsi
     handleLogin(event) {
       console.log('NavBar: Evento auth-login ricevuto', event.detail);
-      // Aspetta il prossimo tick del ciclo di eventi
-      this.$nextTick(() => {
-        this.updateUserData();
-      });
+
+      // Prima prova a leggere dal localStorage
+      const updated = this.updateUserData();
+
+      // Se non trova i dati, usa quelli dall'evento
+      if (!updated && event.detail && event.detail.user) {
+        console.log('NavBar: Uso i dati dall\'evento per aggiornare');
+        const userData = event.detail.user;
+        const authority = userData.authority || 0;
+
+        // Verifica se il token è presente
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.warn('NavBar: Token non trovato!');
+          return;
+        }
+        // Aggiorna i dati del componente
+        this.user = userData;
+        this.isLoggedIn = true;
+        this.userEmail = userData.email || '';
+        this.userAuthority = authority;
+        this.isViewer = authority >= 1;
+        this.isOperator = authority >= 2;
+        this.isAdmin = authority >= 3;
+
+        console.log('NavBar: User data updated from event ');
+        this.startSessionCheck();
+      }
     },
 
-    // ✅ CORRETTO
     handleLogout() {
       console.log('NavBar: Evento auth-logout ricevuto');
       this.clearUserData();

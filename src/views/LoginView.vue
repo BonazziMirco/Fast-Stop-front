@@ -91,8 +91,6 @@ export default {
     }
   },
   methods: {
-    // LoginView.vue - Modifica SOLO il metodo handleLogin
-
     async handleLogin() {
       // Reset stati
       this.error = null;
@@ -116,6 +114,13 @@ export default {
 
         console.log(' RISPOSTA COMPLETA:', data);
 
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          console.log(' Token salvato:', data.token);
+        } else {
+          console.error('Nessun token ricevuto!');
+        }
+
         // Salva dati utente
         localStorage.setItem('user', JSON.stringify({
           id: data.user.id,
@@ -125,8 +130,9 @@ export default {
         }));
 
         console.log(' User salvato:', localStorage.getItem('user'));
+        console.log(' Token presente:', !!localStorage.getItem('token'));
 
-        // EMETTI L'EVENTO DI LOGIN - QUESTO È FONDAMENTALE!
+        // EMETTI L'EVENTO DI LOGIN
         window.dispatchEvent(new CustomEvent('auth-login', {
           detail: { user: data.user }
         }));
@@ -135,13 +141,11 @@ export default {
         this.success = true;
         console.log('Login riuscito:', data.user.authority);
 
-        // Reindirizza dopo 1.5 secondi
-        // setTimeout(() => {
-          this.$router.push('/map'); // VAI DIRETTAMENTE A /map
-        // }, 1500);
+        // Reindirizza
+        this.$router.push('/map');
 
       } catch (err) {
-        // Gestione errori (invariata)
+        // Gestione errori
         switch(err.status) {
           case 400:
             this.error = ' Email o password non corretti. Riprova.';
