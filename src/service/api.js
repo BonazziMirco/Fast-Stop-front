@@ -83,3 +83,26 @@ export async function del(endpoint) {
     return handleResponse(response);
 }
 
+//HEAD
+export async function head(endpoint, data = {}) {
+    const token = localStorage.getItem('token');
+    const url = `${API_BASE_URL}${endpoint}`;
+
+    const response = await fetch(url, {
+        method: 'HEAD',
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
+        }
+    });
+
+    if (!response.ok) {
+        const error = new Error(`HTTP error! status: ${response.status}`);
+        error.status = response.status;
+        error.response = response;
+        throw error;
+    }
+
+    return response;
+}
+

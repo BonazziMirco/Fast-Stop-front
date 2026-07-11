@@ -21,7 +21,7 @@
                 :disabled="loading"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white"
             >
-              <option value="*">📋 Tutti i parcheggi</option>
+              <option value="*">seleziona parcheggio</option>
               <option
                   v-for="lot in lots"
                   :value="lot.id"
@@ -68,7 +68,7 @@
                 class="w-full px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
             >
               <span v-if="loading" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-              {{ loading ? 'Caricamento...' : '🔄 Aggiorna' }}
+              {{ loading ? 'Caricamento...' : 'Aggiorna' }}
             </button>
           </div>
         </div>
@@ -293,7 +293,7 @@ export default {
 
     async loadLots() {
       try {
-        const data = await get('/parkings')
+        const data = await get('/parkings/lots')
         this.lots = data.lots || data || []
         this.lotMap = this.lots.reduce((map, lot) => {
           map[lot.id] = lot.name

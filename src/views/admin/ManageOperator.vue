@@ -243,7 +243,7 @@ export default {
       this.message = null
 
       try {
-        const data = await get('/users')
+        const data = await get('/userManagement/users')
         this.users = data
             .filter(user => user.role !== 3)
             .map(user => ({

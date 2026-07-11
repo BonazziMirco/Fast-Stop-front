@@ -198,7 +198,7 @@ export default {
       try {
         for (let zoneId = 0; zoneId <= 2; zoneId++) {
           try {
-            const data = await get(`/zones/${zoneId}/lots`)
+            const data = await get(`/parkings/zones/${zoneId}/lots`)
             const parkings = data.lots || data
 
             if (Array.isArray(parkings)) {
