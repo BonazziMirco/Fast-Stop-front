@@ -39,9 +39,15 @@
                 </span>
             </td>
           </tr>
-          <tr v-if="lots.length === 0">
+          <tr v-if="lots.length === 0 && !loading">
             <td colspan="4" class="py-8 text-center text-gray-500">
               Nessun parcheggio trovato
+            </td>
+          </tr>
+          <tr v-if="loading">
+            <td colspan="4" class="py-8 text-center text-gray-500">
+              <span class="inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2"></span>
+              Caricamento parcheggi...
             </td>
           </tr>
           </tbody>
@@ -68,9 +74,20 @@
       >
         Annulla
       </button>
+      <button
+          @click="uploadParking"
+          :disabled="loading"
+          class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+      >
+        <svg v-if="!loading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span v-if="loading" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        {{ loading ? 'Caricamento...' : 'Ricarica' }}
+      </button>
     </div>
 
-    <!-- Form di modifica (sostituisce i pulsanti quando attivo) -->
+    <!-- Form di modifica -->
     <div v-if="!modify" class="mt-6 bg-white rounded-xl shadow-md border border-gray-200 p-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-4">Modifica Parcheggio</h3>
 
@@ -152,7 +169,7 @@
     </div>
 
     <!-- Messaggio -->
-    <div v-if="message" class="mt-4 p-4 rounded-lg" :class="message.includes('successo') ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'">
+    <div v-if="message" class="mt-4 p-4 rounded-lg" :class="message.includes('successo') || message.includes('caricati') ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'">
       {{ message }}
     </div>
   </div>
@@ -196,32 +213,32 @@ export default {
       this.lots = []
 
       try {
-        for (let zoneId = 0; zoneId <= 2; zoneId++) {
-          try {
-            const data = await get(`/parkings/zones/${zoneId}/lots`)
-            const parkings = data.lots || data
+        const data = await get('/parkings/lots')
 
-            if (Array.isArray(parkings)) {
-              parkings.forEach(parking => {
-                parking.zone = zoneId
-              })
-              this.lots.push(...parkings)
-            }
-          } catch (error) {
-            console.log(`Errore zona ${zoneId}:`, error)
-
-          }
+        if (Array.isArray(data)) {
+          this.lots = data
+        } else if (data && Array.isArray(data.lots)) {
+          this.lots = data.lots
+        } else {
+          console.error('Formato dati inaspettato:', data)
+          this.lots = []
+          this.message = 'Formato dati non valido'
+          return
         }
 
         console.log('Parcheggi caricati:', this.lots.length)
 
       } catch (error) {
+        console.error('Errore nel caricamento dei parcheggi:', error)
+
         if (error.status === 401) {
           alert('Sessione scaduta. Riaccedi.')
           localStorage.removeItem('user')
           localStorage.removeItem('authority')
           localStorage.removeItem('token')
           this.$router.push('/login')
+        } else {
+          this.message = 'Errore nel caricamento dei parcheggi: ' + (error.message || '')
         }
       } finally {
         this.loading = false
@@ -266,7 +283,7 @@ export default {
       // Controlla se ci sono modifiche
       const hasChanges = JSON.stringify(this.formData) !== JSON.stringify(this.originalData)
       if (!hasChanges) {
-        this.message = 'ℹNessuna modifica da salvare'
+        this.message = 'Nessuna modifica da salvare'
         setTimeout(() => { this.message = null }, 3000)
         return
       }
@@ -306,7 +323,7 @@ export default {
 
       } catch (error) {
         console.error(error)
-        this.message = error?.message || ' Errore durante la modifica del parcheggio'
+        this.message = error?.message || 'Errore durante la modifica del parcheggio'
       } finally {
         this.loading = false
         this.saving = false
