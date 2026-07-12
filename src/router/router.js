@@ -8,6 +8,8 @@ import AddOperator from "@/views/admin/AddOperator.vue";
 import AdminDashboard from "@/views/admin/AdminDashboard.vue";
 import OperatorView from "@/views/OperatorView.vue";
 import StatsView from "@/views/StatsView.vue";
+import AddDevice from "@/views/admin/AddDevice.vue";
+import ManageDevice from "@/views/admin/ManageDevice.vue";
 
 const routes = [
     {
@@ -53,6 +55,16 @@ const routes = [
                 path:'add-operator',
                 name:'add-operator',
                 component: AddOperator
+            },
+            {
+                path: 'add-device',
+                name:'add-device',
+                component: AddDevice
+            },
+            {
+                path:'manage-device',
+                name:'manage-device',
+                component: ManageDevice
             },
             {
                 path:'',
