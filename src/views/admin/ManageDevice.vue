@@ -240,7 +240,7 @@ export default {
       this.message = null
 
       try {
-        const data = await get('/profile/devices')
+        const data = await get('/userManagement/devices')
         this.devices = data || []
         this.retryCount = 0
       } catch (error) {
@@ -350,7 +350,7 @@ export default {
 
       try {
         // Elimina il dispositivo
-        await del(`/auth/devices/${this.deviceToDelete.id}`)
+        await del(`/userManagement/devices/${this.deviceToDelete.id}`)
 
         this.message = `Parchimetro "${this.deviceToDelete.name}" eliminato con successo!`
 
