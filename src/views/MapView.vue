@@ -96,6 +96,15 @@
         Dettagli Parcheggio: {{ selectedLot.name }}
       </h3>
 
+
+<!--indirizzo-->
+      <div v-if="address" class="mb-4 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+        <div class="flex items-center">
+          <i class="fas fa-map-pin text-indigo-600 text-xl mr-3"></i>
+          <span class="text-indigo-900 font-medium text-base">{{ address }}</span>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <!-- Posti Liberi -->
         <div class="bg-green-50 rounded-lg p-4 border border-green-200">
@@ -119,16 +128,6 @@
           </div>
         </div>
 
-<!--        indirizzo-->
-        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-blue-800">
-              <i class="fas fa-total text-blue-600 mr-2"></i>
-              Indirizzo
-            </span>
-            <span class="text-2xl font-bold text-blue-600">{{ address||'' }}</span>
-          </div>
-        </div>
       </div>
 
 

@@ -12,12 +12,13 @@
     <div class="flex items-center justify-between p-4 border-b border-gray-700">
       <h2 class="text-xl font-bold text-white">Dashboard</h2>
       <button
-          v-if="isMobile"
+          v-if="isMobile && !isOpen"
           @click="toggleSidebar"
-          class="p-2 rounded-lg hover:bg-gray-700 transition-colors"
-          aria-label="Chiudi menu"
+          class="fixed z-50 p-2 bg-blue-900 text-white rounded-lg shadow-lg hover:bg-blue-800 transition-colors"
+          :class="isMobile ? 'top-16 left-4' : 'top-4 left-4'"
+          aria-label="Apri menu"
       >
-        ✕
+        ☰
       </button>
     </div>
 

@@ -114,6 +114,7 @@
                 {{ getRoleName(device.authority) }}
               </span>
             </td>
+            <td class="py-3 px-4 text-sm text-gray-700"> {{device.last_heartbeat}}</td>
             <td class="py-3 px-4">
               <button
                   @click="elimina(device)"
@@ -317,9 +318,9 @@ export default {
     getRoleName(authority) {
       const roles = {
         0: 'parchimetro',
-        1: 'Sbarra',
-        2: 'schermo info-point',
-        3: 'videocamera'
+        1: 'videocamera',
+        2: 'schermo info-point'
+
       }
       return roles[authority] || `Ruolo ${authority}`
     },
