@@ -189,7 +189,6 @@ export default {
         }
       } else {
         this.selectedLot = null
-        // Mostra la somma di tutti i parcheggi quando è selezionato "Tutti"
         if (this.lots.length > 0) {
           this.freeSpot = this.lots.reduce((sum, lot) => sum + lot.freeSpot, 0)
           this.totalSpot = this.lots.reduce((sum, lot) => sum + lot.totalSpot, 0)
@@ -207,7 +206,6 @@ export default {
         this.lots = allLots.filter(lot=> lot.is_active !== false)
 
         if (this.lots.length > 0) {
-          // Seleziona il primo parcheggio di default
           this.selectedLotId = this.lots[0].id
         } else {
           this.selectedLotId = ''
@@ -266,17 +264,11 @@ export default {
 </script>
 
 <style scoped>
-/* Animazioni aggiuntive */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* Personalizzazione scrollbar per i select */
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -291,15 +283,4 @@ select:focus {
   outline: none;
 }
 
-/* Transizioni per i dettagli */
-.details-enter-active,
-.details-leave-active {
-  transition: all 0.3s ease;
-}
-
-.details-enter-from,
-.details-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
 </style>
