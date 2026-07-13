@@ -57,8 +57,9 @@
                     class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">Seleziona un ruolo</option>
-                  <option value="0">Operatore (0)</option>
-                  <option value="1">Supervisore (1)</option>
+                  <option value="0">parchimetro</option>
+                  <option value="1">Videocamera</option>
+                  <option value="2">Schermo info-point</option>
                 </select>
               </td>
             </tr>

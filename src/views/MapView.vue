@@ -202,7 +202,8 @@ export default {
       this.loading = true
       try {
         const data = await get(`/parking/zones/${this.selectedZoneId}/lots`)
-        this.lots = data.lots || data
+        const allLots = data.lots || data
+        this.lots = allLots.filter(lot=> lot.is_active !== false)
 
         if (this.lots.length > 0) {
           // Seleziona il primo parcheggio di default

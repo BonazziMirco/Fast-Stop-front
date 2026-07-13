@@ -3,7 +3,7 @@
       :class="[
       'flex-shrink-0 bg-gradient-to-b from-blue-900 to-gray-800 text-white',
       'transition-all duration-300 ease-in-out',
-      isMobile ? 'fixed top-0 left-0 z-50 h-screen w-64' : 'relative w-64 min-h-screen sticky top-0 h-screen',
+      isMobile ? 'fixed top-0 left-0 z-50 h-screen w-64 mt-16' : 'relative w-64 min-h-screen top-0 h-screen',
       isOpen || !isMobile ? 'translate-x-0' : '-translate-x-full'
     ]"
       class="shadow-xl rounded-l-lg overflow-y-auto"
@@ -73,7 +73,7 @@
   <button
       v-if="isMobile && !isOpen"
       @click="toggleSidebar"
-      class="fixed top-4 left-4 z-50 p-2 bg-blue-900 text-white rounded-lg shadow-lg hover:bg-blue-800 transition-colors"
+      class="fixed top-16 left-4 z-50 p-2 bg-blue-900 text-white rounded-lg shadow-lg hover:bg-blue-800 transition-colors"
       aria-label="Apri menu"
   >
     ☰
