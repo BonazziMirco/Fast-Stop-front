@@ -116,7 +116,7 @@ export default {
         console.error('Errore nel caricamento dei parcheggi:', error)
         this.message = 'Errore nel caricamento dei parcheggi'
         if (error.status === 401) {
-          this.redirectToLogin()
+          this.$emit('auth-error', error);
         }
       }
     },
@@ -146,14 +146,6 @@ export default {
       } finally {
         this.loading = false
       }
-    },
-
-    redirectToLogin() {
-      alert('Sessione scaduta. Riaccedi.')
-      localStorage.removeItem('user')
-      localStorage.removeItem('authority')
-      localStorage.removeItem('token')
-      this.$router.push('/login')
     },
 
     resetForm() {

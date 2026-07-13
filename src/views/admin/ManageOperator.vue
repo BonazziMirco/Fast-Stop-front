@@ -294,13 +294,7 @@ export default {
         }, delay);
 
       } else if (error.status === 401) {
-        this.message = 'Sessione scaduta. Riaccedi.';
-        localStorage.removeItem('user');
-        localStorage.removeItem('authority');
-        localStorage.removeItem('token');
-        setTimeout(() => {
-          this.$router.push('/login');
-        }, 1000);
+        this.$emit('auth-error', error);
 
       } else if (error.status === 404) {
         this.message = 'Risorsa non trovata.';

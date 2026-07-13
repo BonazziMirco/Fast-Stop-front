@@ -213,6 +213,7 @@ export default {
   },
 
   methods: {
+    // OperatorView.vue - Modifica il metodo uploadParking
     async uploadParking() {
       this.loading = true
       this.message = null
@@ -237,15 +238,12 @@ export default {
       } catch (error) {
         console.error('Errore nel caricamento dei parcheggi:', error)
 
-        if (error.status === 401) {
-          alert('Sessione scaduta. Riaccedi.')
-          localStorage.removeItem('user')
-          localStorage.removeItem('authority')
-          localStorage.removeItem('token')
-          this.$router.push('/login')
-        } else {
-          this.message = 'Errore nel caricamento dei parcheggi: ' + (error.message || '')
+        this.message = 'Errore nel caricamento dei parcheggi'
+
+        if (error.response?.status === 401 || error.status === 401) {
+          this.$emit('auth-error', error);
         }
+
       } finally {
         this.loading = false
       }
@@ -331,6 +329,9 @@ export default {
       } catch (error) {
         console.error(error)
         this.message = error?.message || 'Errore durante la modifica del parcheggio'
+        if (error.response?.status === 401 || error.status === 401) {
+          this.$emit('auth-error', error);
+        }
       } finally {
         this.loading = false
         this.saving = false

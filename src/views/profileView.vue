@@ -294,11 +294,8 @@ export default {
       } catch (error) {
         console.error('Errore caricamento profilo:', error)
         if (error.status === 401) {
-          alert('Sessione scaduta. Riaccedi.')
-          localStorage.removeItem('user')
-          localStorage.removeItem('authority')
-          localStorage.removeItem('token')
-          this.$router.push('/login')
+          this.$emit('auth-error', error);
+
         } else {
           alert(error.message || 'Errore nel caricamento del profilo')
         }

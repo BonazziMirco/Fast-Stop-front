@@ -202,12 +202,8 @@ export default {
         }
       } catch (error) {
         console.error('Errore nel caricamento dei parcheggi:', error)
-        if (error.status === 401 ) {
-          alert('Sessione scaduta. Riaccedi.')
-          localStorage.removeItem('user')
-          localStorage.removeItem('authority')
-          localStorage.removeItem('token')
-          this.$router.push('/login')
+        if (error.status === 401) {
+          this.$emit('auth-error', error);
         }
         this.lots = []
         this.selectedLotId = ''

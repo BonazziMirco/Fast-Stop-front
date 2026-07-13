@@ -18,7 +18,6 @@ export default {
   methods: {
     refreshNavbar() {
       console.log('App: Refresh Navbar');
-      // Usa $nextTick per assicurarti che il DOM sia aggiornato
       this.$nextTick(() => {
         if (this.$refs.navbar) {
           this.$refs.navbar.forceRefresh();
@@ -28,19 +27,38 @@ export default {
 
     handleAuthError(error) {
       console.log('App: Errore di autenticazione ricevuto', error);
-      if (error && error.response && error.response.status === 401) {
+
+      const status = error?.response?.status || error?.status;
+
+      if (status === 401) {
+        console.log('App: Sessione scaduta - eseguo logout globale');
+
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userAuthority');
+
+        window.dispatchEvent(new CustomEvent('auth-logout', {
+          detail: { sessionExpired: true }
+        }));
+
         this.refreshNavbar();
+
+        if (this.$route.path !== '/login' && this.$route.path !== '/signin') {
+          this.$router.push('/login');
+        }
       }
+    },
+
+    handleWindowAuthError(event) {
+      this.handleAuthError(event.detail);
     }
   },
   mounted() {
-    // Usa $nextTick per gli event listener
     this.$nextTick(() => {
-      // Ascolta gli eventi di login/logout
       window.addEventListener('auth-login', this.refreshNavbar);
       window.addEventListener('auth-logout', this.refreshNavbar);
+      window.addEventListener('auth-error', this.handleWindowAuthError);
 
-      // Ascolta cambiamenti localStorage
       window.addEventListener('storage', (e) => {
         if (e.key === 'user' || e.key === 'token') {
           console.log('App: Storage cambiato, refresh Navbar');
@@ -52,6 +70,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener('auth-login', this.refreshNavbar);
     window.removeEventListener('auth-logout', this.refreshNavbar);
+    window.removeEventListener('auth-error', this.handleWindowAuthError);
   }
 }
 </script>
