@@ -2,22 +2,45 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 // Helper per gestire le risposte
 async function handleResponse(response) {
-    // Se la risposta è 204 No Content
     if (response.status === 204) {
         return null;
     }
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw {
-            status: response.status,
-            message: data.message || 'Errore nella richiesta',
-            data
-        };
+    if (response.status === 200 && response.headers.get('content-length') === '0') {
+        return response;
     }
 
-    return data;
+    try {
+        const data = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.dispatchEvent(new CustomEvent('auth-error', {
+                    detail: {
+                        status: 401,
+                        message: data.message || 'Sessione scaduta'
+                    }
+                }));
+            }
+
+            throw {
+                status: response.status,
+                message: data.message || 'Errore nella richiesta',
+                data
+            };
+        }
+
+        return data;
+    } catch (error) {
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                message: `Errore HTTP: ${response.status}`,
+                data: null
+            };
+        }
+        throw error;
+    }
 }
 
 // GET
@@ -27,7 +50,7 @@ export async function get(endpoint) {
         headers: {
             'Content-Type': 'application/json',
         },
-        credentials: 'include' // IMPORTANTE: corrisponde a credentials: true nel CORS
+        credentials: 'include'
     });
     return handleResponse(response);
 }
@@ -93,7 +116,8 @@ export async function head(endpoint, data = {}) {
         headers: {
             'Content-Type': 'application/json',
             ...(token && { 'Authorization': `Bearer ${token}` })
-        }
+        },
+        credentials: 'include'
     });
 
     if (!response.ok) {

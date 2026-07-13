@@ -291,23 +291,7 @@ export default {
       return this.lotMap[lotId] || `Parcheggio ${lotId}`
     },
 
-    async loadLots() {
-      try {
-        const data = await get('/parkings/lots')
-        this.lots = data.lots || data || []
-        this.lotMap = this.lots.reduce((map, lot) => {
-          map[lot.id] = lot.name
-          return map
-        }, {})
-      } catch (error) {
-        console.error('Errore nel caricamento dei parcheggi:', error)
-        this.lots = []
-        this.error = 'Impossibile caricare la lista dei parcheggi'
-      }
-    },
-
     async loadAllStats() {
-      // Reset stati
       this.error = null
       this.loading = true
 
@@ -320,9 +304,38 @@ export default {
         ])
       } catch (error) {
         console.error('Errore nel caricamento delle statistiche:', error)
-        this.error = 'Errore nel caricamento dei dati. Riprova più tardi.'
+
+        // Gestisci specificamente l'errore 401
+        if (error.status === 401) {
+          this.error = 'Sessione scaduta. Effettua nuovamente il login.'
+          this.$emit('auth-error', error)
+        } else {
+          this.error = 'Errore nel caricamento dei dati. Riprova più tardi.'
+        }
       } finally {
         this.loading = false
+      }
+    },
+
+    async loadLots() {
+      try {
+        const data = await get('/parkings/lots')
+        this.lots = data.lots || data || []
+        this.lotMap = this.lots.reduce((map, lot) => {
+          map[lot.id] = lot.name
+          return map
+        }, {})
+      } catch (error) {
+        console.error('Errore nel caricamento dei parcheggi:', error)
+        this.lots = []
+
+        if (error.status === 401) {
+          this.error = 'Sessione scaduta. Effettua nuovamente il login.'
+        } else {
+          this.error = 'Impossibile caricare la lista dei parcheggi'
+        }
+
+        throw error // Rilancia per gestirlo a livello superiore
       }
     },
 
