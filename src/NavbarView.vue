@@ -330,7 +330,7 @@ export default {
       if (!this.isLoggedIn) return;
 
       try {
-        const response = await head('/auth/checkSession', {});
+        const response = await get('/auth/checkSession', {});
         console.log('Session check response:', response);
       } catch (error) {
         console.error('Errore durante il check della sessione:', error);

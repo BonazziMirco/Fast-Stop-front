@@ -43,9 +43,9 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
               <option value="">Tutti</option>
-              <option value="user">Utenti</option>
-              <option value="viewer">Osservatori</option>
-              <option value="operator">Operatori</option>
+              <option value= "0" >Utenti</option>
+              <option value="1">Osservatori</option>
+              <option value="2">Operatori</option>
             </select>
           </div>
 
