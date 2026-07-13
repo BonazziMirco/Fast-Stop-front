@@ -80,9 +80,18 @@
       </div>
 
       <!-- Messaggio nessun dato -->
-      <div v-if="!loading && dailyStats.length === 0 && weeklyStats.length === 0 && monthlyStats.length === 0 && !error"
-           class="bg-white rounded-xl shadow-lg border border-gray-200 p-12 text-center">
-        <p class="text-gray-500 text-lg">Nessun dato disponibile. Seleziona i filtri e clicca su "Aggiorna".</p>
+      <div v-if="!loading && !error && hasNoData" class="bg-white rounded-xl shadow-lg border border-gray-200 p-12 text-center">
+        <div class="flex flex-col items-center">
+          <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p class="text-gray-600 text-lg font-medium">
+            {{ noDataMessage }}
+          </p>
+          <p class="text-gray-400 text-sm mt-1">
+            {{ noDataSubMessage }}
+          </p>
+        </div>
       </div>
 
       <!-- Grafico Giornaliero -->
@@ -240,6 +249,27 @@ export default {
           }
         ]
       }
+    },
+
+    hasNoData() {
+      return this.dailyStats.length === 0 &&
+          this.weeklyStats.length === 0 &&
+          this.monthlyStats.length === 0
+    },
+
+    noDataMessage() {
+      if (this.selectedLotId !== '*') {
+        const lotName = this.getLotName(this.selectedLotId)
+        return `Nessuna informazione relativa a "${lotName}"`
+      }
+      return 'Nessun dato disponibile per il periodo selezionato'
+    },
+
+    noDataSubMessage() {
+      if (this.selectedLotId !== '*') {
+        return 'Prova a selezionare un periodo diverso o un altro parcheggio'
+      }
+      return 'Seleziona i filtri e clicca su "Aggiorna" per visualizzare i dati'
     }
   },
 

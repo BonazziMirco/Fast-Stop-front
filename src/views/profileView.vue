@@ -329,17 +329,11 @@ export default {
 
   mounted() {
     this.caricaProfilo()
-    //testing
     const role = this.user?.authority
     console.log('Ruolo:', role)
   },
 
   methods: {
-
-    handleImageError(event) {
-      console.warn('Immagine non trovata, uso fallback')
-      event.target.src = user // Usa immagine default
-    },
 
     async caricaProfilo() {
       this.loading = true
