@@ -37,8 +37,8 @@
             </td>
             <td class="py-3 px-4 text-sm text-gray-700">{{ lot.availableSpots }}</td>
             <td class="py-3 px-4">
-                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="lot.is_active === 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                  {{ lot.is_active === 1 ? 'Aperto' : 'Chiuso' }}
+                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="lot.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                  {{ lot.is_active ? 'Aperto' : 'Chiuso' }}
                 </span>
             </td>
           </tr>
