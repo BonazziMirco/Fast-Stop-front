@@ -319,7 +319,7 @@ export default {
 
     async loadLots() {
       try {
-        const data = await get('/parkings/lots')
+        const data = await get('/parking/lots')
         this.lots = data.lots || data || []
         this.lotMap = this.lots.reduce((map, lot) => {
           map[lot.id] = lot.name
