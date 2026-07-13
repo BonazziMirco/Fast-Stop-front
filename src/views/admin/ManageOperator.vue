@@ -43,7 +43,7 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
               <option value="">Tutti</option>
-              <option value= "0" >Utenti</option>
+              <option value="0" >Utenti</option>
               <option value="1">Osservatori</option>
               <option value="2">Operatori</option>
             </select>
@@ -111,7 +111,7 @@
                 </span>
             </td>
             <td class="py-3 px-4">
-                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="!user.is_active ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
+                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="user.is_active ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
                   {{ user.is_active ? 'Attivo' : 'Sospeso'}}
                 </span>
             </td>
