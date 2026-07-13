@@ -17,48 +17,44 @@
           class="p-2 rounded-lg hover:bg-gray-700 transition-colors"
           aria-label="Chiudi menu"
       >
-        <X class="w-6 h-6" />
+        ✕
       </button>
     </div>
 
     <nav class="flex flex-col p-3 space-y-1">
       <router-link
           to="/admin/add-operator"
-          class="flex items-center gap-3 px-4 py-2.5 font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+          class="flex items-center px-4 py-2.5 font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
           active-class="bg-gray-700 text-white shadow-lg ring-1 ring-blue-500/30"
           @click="closeOnMobile"
       >
-        <UserPlus class="w-5 h-5" />
         Aggiungi Operatore
       </router-link>
 
       <router-link
           to="/admin/manage-operator"
-          class="flex items-center gap-3 px-4 py-2.5 font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+          class="flex items-center px-4 py-2.5 font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
           active-class="bg-gray-700 text-white shadow-lg ring-1 ring-blue-500/30"
           @click="closeOnMobile"
       >
-        <Users class="w-5 h-5" />
         Gestisci Operatori
       </router-link>
 
       <router-link
           to="/admin/add-device"
-          class="flex items-center gap-3 px-4 py-2.5 font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+          class="flex items-center px-4 py-2.5 font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
           active-class="bg-gray-700 text-white shadow-lg ring-1 ring-blue-500/30"
           @click="closeOnMobile"
       >
-        <Plus class="w-5 h-5" />
         Aggiungi parchimetro
       </router-link>
 
       <router-link
           to="/admin/manage-device"
-          class="flex items-center gap-3 px-4 py-2.5 font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+          class="flex items-center px-4 py-2.5 font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
           active-class="bg-gray-700 text-white shadow-lg ring-1 ring-blue-500/30"
           @click="closeOnMobile"
       >
-        <Settings class="w-5 h-5" />
         Modifica parchimetri
       </router-link>
     </nav>
@@ -79,23 +75,13 @@
       class="fixed top-4 left-4 z-50 p-2 bg-blue-900 text-white rounded-lg shadow-lg hover:bg-blue-800 transition-colors"
       aria-label="Apri menu"
   >
-    <Menu class="w-6 h-6" />
+    ☰
   </button>
 </template>
 
 <script>
-import { Menu, X, UserPlus, Users, Plus, Settings } from 'lucide-vue-next';
-
 export default {
   name: 'AdminSidebar',
-  components: {
-    Menu,
-    X,
-    UserPlus,
-    Users,
-    Plus,
-    Settings
-  },
   data() {
     return {
       isOpen: false,
