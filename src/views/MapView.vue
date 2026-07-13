@@ -118,7 +118,19 @@
             <span class="text-2xl font-bold text-blue-600">{{ totalSpot || 0 }}</span>
           </div>
         </div>
+
+<!--        indirizzo-->
+        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-blue-800">
+              <i class="fas fa-total text-blue-600 mr-2"></i>
+              Indirizzo
+            </span>
+            <span class="text-2xl font-bold text-blue-600">{{ address||'' }}</span>
+          </div>
+        </div>
       </div>
+
 
       <!-- Barra di occupazione -->
       <div class="mt-4">
@@ -162,6 +174,7 @@ export default {
       freeSpot: 0,
       totalSpot: 0,
       selectedZoneId: '',
+      address: '',
     }
   },
 
@@ -172,6 +185,7 @@ export default {
         if (this.selectedLot) {
           this.freeSpot = this.selectedLot.availableSpots || 0
           this.totalSpot = this.selectedLot.capacity || 0
+          this.address = this.selectedLot.address || ''
         }
       } else {
         this.selectedLot = null
@@ -199,6 +213,7 @@ export default {
           this.selectedLot = null
           this.freeSpot = 0
           this.totalSpot = 0
+          this.address = ''
         }
       } catch (error) {
         console.error('Errore nel caricamento dei parcheggi:', error)
@@ -220,6 +235,7 @@ export default {
         this.selectedLot = null
         this.freeSpot = 0
         this.totalSpot = 0
+        this.address = ''
         return
       }
       await this.loadLots()
@@ -241,14 +257,9 @@ export default {
         parcheggio: this.selectedLot || 'Tutti'
       })
 
-      this.updateMap()
     },
 
-    updateMap() {
-      console.log('Aggiornamento mappa in corso...')
-      // Qui puoi implementare la logica per aggiornare la mappa
-      // Esempio: this.$emit('update-map', { zone: this.selectedZoneId, lot: this.selectedLot })
-    }
+
   }
 }
 </script>

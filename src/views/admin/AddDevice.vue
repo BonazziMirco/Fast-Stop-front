@@ -141,7 +141,7 @@ export default {
         console.error('Error occured', error)
         this.message = error.message || 'Errore durante la creazione'
         if (error.status === 401) {
-          this.redirectToLogin()
+          this.$emit('auth-error', error);
         }
       } finally {
         this.loading = false

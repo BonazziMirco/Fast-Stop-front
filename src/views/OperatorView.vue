@@ -110,19 +110,13 @@
 
           <!-- Zona -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Zona</label>
-            <select
-                v-model="formData.zone"
+            <label class="block text-sm font-medium text-gray-700 mb-1">Indirizzo</label>
+            <input
+                type="text"
+                v-model="formData.address"
                 :disabled="loading"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100"
             >
-              <option value="Centro_Storico"> Centro Storico</option>
-              <option value="Zona_Piedicastello">Piedicastello</option>
-              <option value="Zona_Albere">Albere</option>
-              <option value="Bolghera">Bolghera</option>
-              <option value="Trento_Nord">Trento Nord</option>
-              <option value="San_Bartolomeo">San Bartolomeo</option>
-            </select>
           </div>
 
           <!-- Posti -->
@@ -203,6 +197,7 @@ export default {
         zone: '',
         spots: '',
         state: '',
+        address:'',
       },
       originalData: {},
     }
