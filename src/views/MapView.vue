@@ -159,8 +159,8 @@ export default {
       selectedLot: null,
       selectedLotId: '',
       loading: false,
-      freeSpot: '',
-      totalSpot: '',
+      freeSpot: 0,
+      totalSpot: 0,
       selectedZoneId: '',
     }
   },
@@ -170,8 +170,8 @@ export default {
       if (newId) {
         this.selectedLot = this.lots.find(lot => lot.id === newId)
         if (this.selectedLot) {
-          this.freeSpot = this.selectedLot.freeSpot
-          this.totalSpot = this.selectedLot.totalSpot
+          this.freeSpot = this.selectedLot.availableSpots || 0
+          this.totalSpot = this.selectedLot.capacity || 0
         }
       } else {
         this.selectedLot = null

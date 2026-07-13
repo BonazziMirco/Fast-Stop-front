@@ -7,16 +7,16 @@
           <img src="../public/logo-esteso.png" alt="logo" class="h-10 w-auto object-contain" />
         </div>
 
-        <div v-if="isLoggedIn" class="flex items-start gap-3">
-            <span class="text-blue-950 text-base font-medium font-['Comic_Sans_MS'] italic border-l-2 border-gray-300 pl-4">
-              Benvenuto, {{ userEmail }}
-            </span>
+        <!-- Benvenuto (solo desktop) -->
+        <div v-if="isLoggedIn" class="hidden md:flex items-start gap-3">
+          <span class="text-blue-950 text-base font-medium font-['Comic_Sans_MS'] italic border-l-2 border-gray-300 pl-4">
+            Benvenuto, {{ userEmail }}
+          </span>
         </div>
 
-
-        <!-- Sezione destra -->
-        <div class="flex items-start gap-4 flex-wrap">
-          <!-- Benvenuto e Profilo -->
+        <!-- Sezione destra - Desktop -->
+        <div class="hidden md:flex items-start gap-4 flex-wrap">
+          <!-- Profilo -->
           <div v-if="isLoggedIn" class="flex items-center gap-3">
             <router-link
                 to="/profilo"
@@ -29,7 +29,7 @@
 
           <div class="w-px h-8 bg-gray-200"></div>
 
-          <!-- Link di navigazione -->
+          <!-- Link di navigazione desktop -->
           <div class="flex items-center gap-2 flex-wrap">
             <router-link
                 to="/map"
@@ -80,9 +80,6 @@
             </template>
 
             <!-- Login/Signin per non loggati -->
-
-
-
             <template v-else>
               <router-link
                   to="/login"
@@ -101,6 +98,130 @@
             </template>
           </div>
         </div>
+
+        <!-- Menu Hamburger per Mobile -->
+        <div class="md:hidden flex items-center gap-2">
+          <!-- Versione mobile del benvenuto (semplificata) -->
+          <span v-if="isLoggedIn" class="text-blue-950 text-sm font-medium truncate max-w-[120px]">
+            {{ userEmail }}
+          </span>
+
+          <button
+              @click="toggleMobileMenu"
+              class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none"
+              aria-label="Toggle menu"
+          >
+            <svg
+                class="w-6 h-6 text-blue-900"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+              <path
+                  v-if="!mobileMenuOpen"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+              />
+              <path
+                  v-else
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Menu Mobile a tendina -->
+      <div
+          v-if="mobileMenuOpen"
+          class="md:hidden py-4 border-t border-gray-200 space-y-2"
+      >
+        <!-- Link di navigazione mobile -->
+        <router-link
+            to="/map"
+            class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 text-sm font-medium"
+            active-class="bg-red-100"
+            @click="closeMobileMenu"
+        >
+          Mappa
+        </router-link>
+
+        <template v-if="isLoggedIn">
+          <router-link
+              to="/profilo"
+              class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 text-sm font-medium"
+              active-class="bg-red-100"
+              @click="closeMobileMenu"
+          >
+            Profilo
+          </router-link>
+
+          <template v-if="isViewer">
+            <router-link
+                to="/stats"
+                class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 text-sm font-medium"
+                active-class="bg-red-100"
+                @click="closeMobileMenu"
+            >
+              Statistiche
+            </router-link>
+
+            <template v-if="isOperator">
+              <router-link
+                  to="/parking"
+                  class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 text-sm font-medium"
+                  active-class="bg-red-100"
+                  @click="closeMobileMenu"
+              >
+                Aggiorna Parcheggi
+              </router-link>
+
+              <template v-if="isAdmin">
+                <router-link
+                    to="/admin"
+                    class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 text-sm font-medium"
+                    active-class="bg-red-100"
+                    @click="closeMobileMenu"
+                >
+                  Dashboard Admin
+                </router-link>
+              </template>
+            </template>
+          </template>
+
+          <!-- Logout mobile -->
+          <button
+              @click="handleMobileLogout"
+              class="block w-full text-left px-4 py-2 text-white bg-blue-800 rounded-lg hover:bg-blue-950 transition-all duration-200 text-sm font-medium"
+          >
+            Logout
+          </button>
+        </template>
+
+        <!-- Login/Signin per non loggati (mobile) -->
+        <template v-else>
+          <router-link
+              to="/login"
+              class="block px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-800 transition-all duration-200 text-sm font-medium text-center"
+              active-class="bg-blue-700"
+              @click="closeMobileMenu"
+          >
+            Login
+          </router-link>
+          <router-link
+              to="/signin"
+              class="block px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all duration-200 text-sm font-medium text-center"
+              active-class="bg-red-700"
+              @click="closeMobileMenu"
+          >
+            Sign In
+          </router-link>
+        </template>
       </div>
     </div>
   </nav>
@@ -121,15 +242,28 @@ export default {
       userAuthority: 0,
       isViewer: false,
       isOperator: false,
-      isAdmin: false
+      isAdmin: false,
+      mobileMenuOpen: false
     }
   },
 
   methods:{
+    toggleMobileMenu() {
+      this.mobileMenuOpen = !this.mobileMenuOpen;
+    },
+
+    closeMobileMenu() {
+      this.mobileMenuOpen = false;
+    },
+
+    handleMobileLogout() {
+      this.closeMobileMenu();
+      this.logout();
+    },
+
     updateUserData() {
       console.log('NavBar: updateUserData called');
 
-      // Leggi direttamente dal localStorage
       const token = localStorage.getItem('token');
       const userDataStr = localStorage.getItem('user');
 
@@ -156,7 +290,6 @@ export default {
             authority: this.userAuthority
           });
 
-          // Avvia il controllo sessione
           this.startSessionCheck();
           return true;
         } catch (e) {
@@ -180,6 +313,7 @@ export default {
       this.isOperator = false;
       this.isAdmin = false;
       this.stopSessionCheck();
+      this.closeMobileMenu();
       console.log('NavBar: User data cleared');
     },
 
@@ -220,15 +354,12 @@ export default {
       } catch (error) {
         console.error('Errore durante il logout:', error);
       } finally {
-        // Pulisci i dati locali
         localStorage.removeItem('user');
         localStorage.removeItem('userAuthority');
         localStorage.removeItem('token');
 
-        // Pulisci i dati del componente
         this.clearUserData();
 
-        // Notifica il logout
         window.dispatchEvent(new CustomEvent('auth-logout', {
           detail: { sessionExpired: isSessionExpired }
         }));
@@ -269,22 +400,19 @@ export default {
     handleLogin(event) {
       console.log('NavBar: Evento auth-login ricevuto', event.detail);
 
-      // Prima prova a leggere dal localStorage
       const updated = this.updateUserData();
 
-      // Se non trova i dati, usa quelli dall'evento
       if (!updated && event.detail && event.detail.user) {
         console.log('NavBar: Uso i dati dall\'evento per aggiornare');
         const userData = event.detail.user;
         const authority = userData.authority || 0;
 
-        // Verifica se il token è presente
         const token = localStorage.getItem('token');
         if (!token) {
           console.warn('NavBar: Token non trovato!');
           return;
         }
-        // Aggiorna i dati del componente
+
         this.user = userData;
         this.isLoggedIn = true;
         this.userEmail = userData.email || '';
@@ -322,12 +450,10 @@ export default {
 
   created(){
     console.log('NavBar created');
-    // Aspetta che il componente sia montato prima di leggere i dati
     this.$nextTick(() => {
       this.updateUserData();
     });
 
-    // Registra gli event listener
     window.addEventListener('auth-login', this.handleLogin);
     window.addEventListener('auth-logout', this.handleLogout);
     window.addEventListener('storage', this.handleStorageChange);
