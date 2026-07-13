@@ -293,6 +293,7 @@ export default {
         this.monthlyStats = []
         this.error = null
       }
+    }
   },
 
   methods: {
