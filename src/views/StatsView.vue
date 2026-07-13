@@ -21,7 +21,7 @@
                 :disabled="loading"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white"
             >
-              <option value="*">seleziona parcheggio</option>
+              <option value="">seleziona parcheggio</option>
               <option
                   v-for="lot in lots"
                   :value="lot.id"
@@ -41,7 +41,7 @@
                 type="date"
                 id="startDate"
                 v-model="startDate"
-                :disabled="loading"
+                :disabled="loading || !selectedLotId"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
             >
           </div>
@@ -55,7 +55,7 @@
                 type="date"
                 id="endDate"
                 v-model="endDate"
-                :disabled="loading"
+                :disabled="loading || !selectedLotId"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
             >
           </div>
@@ -64,7 +64,7 @@
           <div class="flex items-end">
             <button
                 @click="loadAllStats"
-                :disabled="loading"
+                :disabled="loading || !selectedLotId"
                 class="w-full px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
             >
               <span v-if="loading" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -79,24 +79,33 @@
         </div>
       </div>
 
+      <!-- Messaggio seleziona parcheggio -->
+      <div v-if="!loading && !error && !selectedLotId" class="bg-white rounded-xl shadow-lg border border-gray-200 p-12 text-center">
+        <div class="flex flex-col items-center">
+          <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p class="text-gray-600 text-lg font-medium">Seleziona un parcheggio per visualizzare le statistiche</p>
+          <p class="text-gray-400 text-sm mt-1">Scegli un parcheggio dal menu a tendina sopra</p>
+        </div>
+      </div>
+
       <!-- Messaggio nessun dato -->
-      <div v-if="!loading && !error && hasNoData" class="bg-white rounded-xl shadow-lg border border-gray-200 p-12 text-center">
+      <div v-if="!loading && !error && selectedLotId && hasNoData" class="bg-white rounded-xl shadow-lg border border-gray-200 p-12 text-center">
         <div class="flex flex-col items-center">
           <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           <p class="text-gray-600 text-lg font-medium">
-            {{ noDataMessage }}
+            Nessuna informazione relativa a "{{ getLotName(selectedLotId) }}"
           </p>
-          <p class="text-gray-400 text-sm mt-1">
-            {{ noDataSubMessage }}
-          </p>
+          <p class="text-gray-400 text-sm mt-1">Prova a selezionare un periodo diverso o un altro parcheggio</p>
         </div>
       </div>
 
       <!-- Grafico Giornaliero -->
       <div v-if="dailyStats.length > 0" class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">📈 Statistiche Giornaliere</h2>
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Statistiche Giornaliere</h2>
         <div class="h-80">
           <canvas ref="dailyChart"></canvas>
         </div>
@@ -197,25 +206,20 @@ export default {
   name: 'StatsView',
   data() {
     return {
-      // Stato
       loading: false,
       error: null,
 
-      // Filtri
       lots: [],
-      selectedLotId: '*',
+      selectedLotId: '',
       startDate: this.getDefaultStartDate(),
       endDate: this.getDefaultEndDate(),
 
-      // Dati statistiche
       dailyStats: [],
       weeklyStats: [],
       monthlyStats: [],
 
-      // Riferimenti grafici
       dailyChartInstance: null,
 
-      // Mappa per i nomi dei parcheggi
       lotMap: {}
     }
   },
@@ -224,7 +228,6 @@ export default {
     chartData() {
       if (!this.dailyStats.length) return null
 
-      // Raggruppa per data
       const grouped = {}
       this.dailyStats.forEach(stat => {
         const key = stat.date
@@ -258,18 +261,18 @@ export default {
     },
 
     noDataMessage() {
-      if (this.selectedLotId !== '*') {
+      if (this.selectedLotId) {
         const lotName = this.getLotName(this.selectedLotId)
         return `Nessuna informazione relativa a "${lotName}"`
       }
-      return 'Nessun dato disponibile per il periodo selezionato'
+      return 'Seleziona un parcheggio per visualizzare le statistiche'
     },
 
     noDataSubMessage() {
-      if (this.selectedLotId !== '*') {
+      if (this.selectedLotId) {
         return 'Prova a selezionare un periodo diverso o un altro parcheggio'
       }
-      return 'Seleziona i filtri e clicca su "Aggiorna" per visualizzare i dati'
+      return 'Scegli un parcheggio dal menu a tendina sopra'
     }
   },
 
@@ -322,11 +325,17 @@ export default {
     },
 
     async loadAllStats() {
+      if (!this.selectedLotId) {
+        this.dailyStats = []
+        this.weeklyStats = []
+        this.monthlyStats = []
+        return
+      }
+
       this.error = null
       this.loading = true
 
       try {
-        // Carica tutte le statistiche in parallelo
         await Promise.all([
           this.loadDailyStats(),
           this.loadWeeklyStats(),
@@ -335,7 +344,6 @@ export default {
       } catch (error) {
         console.error('Errore nel caricamento delle statistiche:', error)
 
-        // Gestisci specificamente l'errore 401
         if (error.status === 401) {
           this.error = 'Sessione scaduta. Effettua nuovamente il login.'
           this.$emit('auth-error', error)
@@ -365,7 +373,7 @@ export default {
           this.error = 'Impossibile caricare la lista dei parcheggi'
         }
 
-        throw error // Rilancia per gestirlo a livello superiore
+        throw error
       }
     },
 
@@ -377,7 +385,7 @@ export default {
       } catch (error) {
         console.error('Errore nel caricamento statistiche giornaliere:', error)
         this.dailyStats = []
-        throw error // Rilancia per essere gestito da loadAllStats
+        throw error
       }
     },
 
@@ -406,6 +414,7 @@ export default {
     },
 
     getReportParams() {
+      // Solo se c'è un parcheggio selezionato
       return new URLSearchParams({
         lotId: this.selectedLotId,
         startDate: this.startDate,
@@ -461,7 +470,8 @@ export default {
 
   async created() {
     await this.loadLots()
-    await this.loadAllStats()
+    // Non caricare automaticamente le statistiche - attendi che l'utente selezioni un parcheggio
+    // await this.loadAllStats()
   },
 
   beforeDestroy() {
