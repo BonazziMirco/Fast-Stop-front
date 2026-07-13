@@ -29,12 +29,13 @@
               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option value="" disabled>Scegli una zona</option>
-            <option value="Centro_Storico"> Centro Storico</option>
-            <option value="Zona_Piedicastello">Piedicastello</option>
-            <option value="Zona_Albere">Albere</option>
-            <option value="Bolghera">Bolghera</option>
-            <option value="Trento_Nord">Trento Nord</option>
-            <option value="San_Bartolomeo">San Bartolomeo</option>
+            <option value="Centro_Storico" class="bg-pink-300"> Centro Storico</option>
+            <option value="Zona_Piedicastello" class="bg-orange-300">Piedicastello</option>
+            <option value="Zona_Albere" class="bg-yellow-300">Albere</option>
+            <option value="Bolghera" class="bg-violet-300">Bolghera</option>
+            <option value="Trento_Nord" class="bg-red-400">Trento Nord</option>
+            <option value="San_Bartolomeo" class="bg-green-400">San Bartolomeo</option>
+            <option value="Cristo_Re" class="bg-cyan-300">Cristo Rcolori</option>
           </select>
         </div>
 
