@@ -19,6 +19,7 @@
               <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Email</th>
               <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Password</th>
               <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Conferma Password</th>
+              <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Ruolo</th>
             </tr>
             </thead>
             <tbody>
