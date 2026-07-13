@@ -282,7 +282,17 @@ export default {
         this.renderChart()
       },
       deep: true
-    }
+    },
+
+    selectedLotId(newVal) {
+      if (newVal) {
+        this.loadAllStats()
+      } else {
+        this.dailyStats = []
+        this.weeklyStats = []
+        this.monthlyStats = []
+        this.error = null
+      }
   },
 
   methods: {
