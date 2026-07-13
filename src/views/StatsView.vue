@@ -18,6 +18,7 @@
             <select
                 id="parkingLot"
                 v-model="selectedLotId"
+                @change="onLotChange"
                 :disabled="loading"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white"
             >
@@ -258,21 +259,6 @@ export default {
       return this.dailyStats.length === 0 &&
           this.weeklyStats.length === 0 &&
           this.monthlyStats.length === 0
-    },
-
-    noDataMessage() {
-      if (this.selectedLotId) {
-        const lotName = this.getLotName(this.selectedLotId)
-        return `Nessuna informazione relativa a "${lotName}"`
-      }
-      return 'Seleziona un parcheggio per visualizzare le statistiche'
-    },
-
-    noDataSubMessage() {
-      if (this.selectedLotId) {
-        return 'Prova a selezionare un periodo diverso o un altro parcheggio'
-      }
-      return 'Scegli un parcheggio dal menu a tendina sopra'
     }
   },
 
@@ -282,17 +268,6 @@ export default {
         this.renderChart()
       },
       deep: true
-    },
-
-    selectedLotId(newVal) {
-      if (newVal) {
-        this.loadAllStats()
-      } else {
-        this.dailyStats = []
-        this.weeklyStats = []
-        this.monthlyStats = []
-        this.error = null
-      }
     }
   },
 
@@ -335,6 +310,21 @@ export default {
       return this.lotMap[lotId] || `Parcheggio ${lotId}`
     },
 
+    async onLotChange() {
+      if (this.selectedLotId) {
+        await this.loadAllStats()
+      } else {
+        this.dailyStats = []
+        this.weeklyStats = []
+        this.monthlyStats = []
+        this.error = null
+        if (this.dailyChartInstance) {
+          this.dailyChartInstance.destroy()
+          this.dailyChartInstance = null
+        }
+      }
+    },
+
     async loadAllStats() {
       if (!this.selectedLotId) {
         this.dailyStats = []
@@ -352,6 +342,11 @@ export default {
           this.loadWeeklyStats(),
           this.loadMonthlyStats()
         ])
+
+        // Forza il rendering del grafico
+        await this.$nextTick(() => {
+          this.renderChart()
+        })
       } catch (error) {
         console.error('Errore nel caricamento delle statistiche:', error)
 
@@ -425,7 +420,6 @@ export default {
     },
 
     getReportParams() {
-      // Solo se c'è un parcheggio selezionato
       return new URLSearchParams({
         lotId: this.selectedLotId,
         startDate: this.startDate,
@@ -437,7 +431,6 @@ export default {
       const canvas = this.$refs.dailyChart
       if (!canvas) return
 
-      // Distruggi il grafico esistente
       if (this.dailyChartInstance) {
         this.dailyChartInstance.destroy()
         this.dailyChartInstance = null
@@ -481,8 +474,6 @@ export default {
 
   async created() {
     await this.loadLots()
-    // Non caricare automaticamente le statistiche - attendi che l'utente selezioni un parcheggio
-    // await this.loadAllStats()
   },
 
   beforeDestroy() {
