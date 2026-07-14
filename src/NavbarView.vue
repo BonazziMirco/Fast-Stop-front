@@ -101,7 +101,6 @@
 
         <!-- Menu Hamburger per Mobile -->
         <div class="md:hidden flex items-center gap-2">
-          <!-- Versione mobile del benvenuto (semplificata) -->
           <span v-if="isLoggedIn" class="text-blue-950 text-sm font-medium truncate max-w-[120px]">
             {{ userEmail }}
           </span>

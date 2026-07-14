@@ -278,7 +278,6 @@ export default {
       user: null,
       loading: false,
 
-      // Password
       popUpPassword: true,
       passwordMsg: null,
       oldPassword: '',
@@ -288,7 +287,6 @@ export default {
       showNewPassword: false,
       showCheckPassword: false,
 
-      // Targa
       newTarga: '',
       popUpTarga: true,
       targaMsg: null,
@@ -370,7 +368,6 @@ export default {
       }
     },
 
-    // --- PASSWORD ---
     mostraPassword() {
       this.popUpPassword = false
       this.popUpTarga = true
@@ -427,7 +424,6 @@ export default {
       }
     },
 
-    // --- TARGA ---
     mostraTarga() {
       this.popUpTarga = false
       this.popUpPassword = true
@@ -464,7 +460,6 @@ export default {
 
         console.log('Cambio targa riuscito')
 
-        // Aggiorna la targa in locale
         this.user.car_plate = this.newTarga.toUpperCase().trim()
         localStorage.setItem('user', JSON.stringify(this.user))
 
@@ -483,7 +478,6 @@ export default {
       }
     },
 
-    // --- RUOLO ---
     getRoleName(role) {
       const roles = {
         0: 'User',
@@ -504,7 +498,6 @@ export default {
       return classes[role] || 'bg-gray-100 text-gray-700'
     },
 
-    // --- LOGOUT ---
     async logout() {
       try {
         await post('/auth/logout')

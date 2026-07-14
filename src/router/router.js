@@ -14,7 +14,7 @@ import ManageDevice from "@/views/admin/ManageDevice.vue";
 const routes = [
     {
         path: '/',
-        redirect: '/map'  // Reindirizza la root alla mappa
+        redirect: '/map'
     },
     {
         path: '/map',

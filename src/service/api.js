@@ -107,6 +107,8 @@ export async function del(endpoint) {
 }
 
 //HEAD
+
+//inizialmente usato per il checksession, ma per compatibilità è stato cambiato con get
 export async function head(endpoint, data = {}) {
     const token = localStorage.getItem('token');
     const url = `${API_BASE_URL}${endpoint}`;

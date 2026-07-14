@@ -259,7 +259,6 @@ export default {
         this.parkingLots = data || []
       } catch (error) {
         console.error('Errore nel caricamento dei parcheggi:', error)
-        // Non mostriamo errore all'utente per questo, è secondario
       }
     },
 
@@ -346,7 +345,6 @@ export default {
       this.loading = true
 
       try {
-        // Elimina il dispositivo
         await del(`/userManagement/devices/${this.deviceToDelete.id}`)
 
         this.message = `Parchimetro "${this.deviceToDelete.name}" eliminato con successo!`
@@ -391,7 +389,6 @@ export default {
       }
     },
 
-    // Ricarica i dati
     refreshData() {
       this.loadData()
     }

@@ -272,7 +272,6 @@ export default {
   },
 
   methods: {
-    // Funzione di formattazione globale per i valori statistici
     formatStatValue(value, decimals = 1) {
       if (value === null || value === undefined || value === '') return '0'
       const num = typeof value === 'number' ? value : parseFloat(value)
@@ -350,7 +349,6 @@ export default {
           this.loadMonthlyStats()
         ])
 
-        // Forza il rendering del grafico
         await this.$nextTick(() => {
           this.renderChart()
         })
@@ -446,7 +444,6 @@ export default {
       const ctx = canvas.getContext('2d')
 
       if (this.chartData && this.chartData.labels.length > 0) {
-        // Assicuriamoci che i dati siano numerici
         const chartData = {
           ...this.chartData,
           datasets: this.chartData.datasets.map(dataset => ({

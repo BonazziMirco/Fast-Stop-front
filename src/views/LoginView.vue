@@ -114,12 +114,10 @@ export default {
     },
 
     async handleLogin() {
-      // Reset stati
       this.error = null;
       this.success = false;
       this.loading = true;
 
-      // Validazione base
       if (!this.email || !this.password) {
         this.error = ' Inserisci email e password';
         this.loading = false;
@@ -143,7 +141,6 @@ export default {
           console.error('Nessun token ricevuto!');
         }
 
-        // Salva dati utente
         localStorage.setItem('user', JSON.stringify({
           id: data.user.id,
           email: data.user.email,
@@ -154,20 +151,16 @@ export default {
         console.log(' User salvato:', localStorage.getItem('user'));
         console.log(' Token presente:', !!localStorage.getItem('token'));
 
-        // EMETTI L'EVENTO DI LOGIN
         window.dispatchEvent(new CustomEvent('auth-login', {
           detail: { user: data.user }
         }));
 
-        // Login riuscito
         this.success = true;
         console.log('Login riuscito:', data.user.authority);
 
-        // Reindirizza
         this.$router.push('/map');
 
       } catch (err) {
-        // Gestione errori
         switch(err.status) {
           case 400:
             this.error = ' Email o password non corretti. Riprova.';

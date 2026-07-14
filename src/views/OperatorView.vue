@@ -6,8 +6,6 @@
       <span class="text-sm text-gray-500">{{ lots.length }} parcheggi</span>
     </div>
 
-<!--    filtro parcheggi da fare-->
-<!--    fare in modo che ogni volta che clicc0 altro il form scompare-->
 
     <!-- Tabella -->
     <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
@@ -187,11 +185,9 @@ export default {
       saving: false,
       message: '',
 
-      // Dati parcheggi
       lots: [],
       selectedLot: null,
 
-      // Form
       modify: true,
       formData: {
         name: '',
@@ -209,7 +205,6 @@ export default {
   },
 
   methods: {
-    // OperatorView.vue - Modifica il metodo uploadParking
     async uploadParking() {
       this.loading = true
       this.message = null
@@ -261,7 +256,6 @@ export default {
         return
       }
 
-      // Compila il form con i dati del parcheggio selezionato
       this.formData = {
         name: this.selectedLot.name || '',
         zone: this.selectedLot.zoneId !== undefined ? String(this.selectedLot.zoneId) : '',
@@ -269,7 +263,6 @@ export default {
         state: this.selectedLot.state !== undefined ? this.selectedLot.state : 1,
       }
 
-      // Salva copia originale per il confronto
       this.originalData = { ...this.formData }
       this.modify = false
       this.message = null
@@ -281,7 +274,6 @@ export default {
         return
       }
 
-      // Controlla se ci sono modifiche
       const hasChanges = JSON.stringify(this.formData) !== JSON.stringify(this.originalData)
       if (!hasChanges) {
         this.message = 'Nessuna modifica da salvare'
@@ -294,7 +286,6 @@ export default {
       this.message = null
 
       try {
-        // Costruisci oggetto con solo i campi modificati
         const updates = {}
         if (this.formData.name !== this.originalData.name) {
           updates.name = this.formData.name
@@ -314,7 +305,6 @@ export default {
         this.message = 'Parcheggio modificato con successo!'
         await this.uploadParking()
 
-        // Reset
         this.resetForm()
         this.selectedLot = null
 

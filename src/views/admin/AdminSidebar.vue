@@ -8,7 +8,6 @@
     ]"
       class="shadow-xl rounded-l-lg overflow-y-auto"
   >
-    <!-- Header con pulsante di chiusura per mobile -->
     <div class="flex items-center justify-between p-4 border-b border-gray-700">
       <h2 class="text-xl font-bold text-white">Dashboard</h2>
       <button
@@ -47,7 +46,7 @@
           active-class="bg-gray-700 text-white shadow-lg ring-1 ring-blue-500/30"
           @click="closeOnMobile"
       >
-        Aggiungi parchimetro
+        Aggiungi Dispositivi
       </router-link>
 
       <router-link
@@ -56,12 +55,11 @@
           active-class="bg-gray-700 text-white shadow-lg ring-1 ring-blue-500/30"
           @click="closeOnMobile"
       >
-        Modifica parchimetri
+        Modifica Dispositivi
       </router-link>
     </nav>
   </aside>
 
-  <!-- Overlay per mobile -->
   <div
       v-if="isMobile && isOpen"
       @click="toggleSidebar"
@@ -69,7 +67,6 @@
       aria-hidden="true"
   ></div>
 
-  <!-- Pulsante hamburger per mobile -->
   <button
       v-if="isMobile && !isOpen"
       @click="toggleSidebar"
@@ -101,18 +98,15 @@ export default {
       const wasMobile = this.isMobile;
       this.isMobile = window.innerWidth < 768;
 
-      // Se passa da mobile a desktop, assicura che il sidebar sia visibile
       if (wasMobile && !this.isMobile) {
         this.isOpen = true;
       }
-      // Se passa da desktop a mobile, chiudi il sidebar
       if (!wasMobile && this.isMobile) {
         this.isOpen = false;
       }
     },
     toggleSidebar() {
       this.isOpen = !this.isOpen;
-      // Previeni lo scroll della pagina quando il menu è aperto su mobile
       if (this.isMobile) {
         document.body.style.overflow = this.isOpen ? 'hidden' : '';
       }
@@ -128,7 +122,6 @@ export default {
 </script>
 
 <style scoped>
-/* Animazione per il pulsante hamburger */
 button {
   transition: transform 0.2s ease-in-out;
 }
@@ -137,7 +130,6 @@ button:active {
   transform: scale(0.95);
 }
 
-/* Scroll personalizzato */
 aside::-webkit-scrollbar {
   width: 6px;
 }
@@ -156,12 +148,10 @@ aside::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Animazioni di transizione */
 aside {
   transition: transform 0.3s ease-in-out;
 }
 
-/* Responsive breakpoints */
 @media (max-width: 768px) {
   aside {
     border-radius: 0;

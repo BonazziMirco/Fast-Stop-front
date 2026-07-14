@@ -62,7 +62,6 @@
           </select>
         </div>
 
-        <!-- Messaggio quando non ci sono parcheggi -->
         <div v-else-if="selectedZoneId && lots.length === 0 && !loading" class="col-span-full">
           <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800">
             <i class="fas fa-exclamation-triangle mr-2"></i>
@@ -98,7 +97,7 @@
       </h3>
 
 
-<!--indirizzo-->
+    <!--indirizzo-->
       <div v-if="address" class="mb-4 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
         <div class="flex items-center">
           <i class="fas fa-map-pin text-indigo-600 text-xl mr-3"></i>

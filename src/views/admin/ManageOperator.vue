@@ -306,13 +306,11 @@ export default {
         this.message = error?.message || 'Errore durante il caricamento';
       }
 
-      //  Auto-cancella il messaggio dopo 5 secondi (se non è un retry)
       if (error.status !== 429) {
         this.clearMessageAfterDelay();
       }
     },
 
-    // per cancellare il messaggio dopo un delay
     clearMessageAfterDelay() {
       if (this.messageTimer) {
         clearTimeout(this.messageTimer);
@@ -376,13 +374,10 @@ export default {
 
         this.message = operationMessage;
 
-        // Aspetta 1 secondo prima di ricaricare
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Ricarica la tabella
         await this.createTable();
 
-        // Cancella il messaggio dopo 5 secondi
         this.clearMessageAfterDelay();
 
       } catch (error) {
