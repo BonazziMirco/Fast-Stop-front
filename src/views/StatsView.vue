@@ -132,19 +132,19 @@
             <tr v-for="(stat, index) in weeklyStats" :key="index" class="hover:bg-gray-50 transition-colors">
               <td class="px-6 py-4 text-sm text-gray-900">{{ formatDate(stat.week) }}</td>
               <td class="px-6 py-4 text-sm text-gray-900">{{ getLotName(stat.parking_lot_id) }}</td>
-              <td class="px-6 py-4 text-sm font-semibold text-blue-600">{{ stat.total_reservations }}</td>
-              <td class="px-6 py-4 text-sm text-gray-900">{{ stat.avg_daily_reservations?.toFixed(1) || 0 }}</td>
+              <td class="px-6 py-4 text-sm font-semibold text-blue-600">{{ stat.total_reservations || 0 }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ formatStatValue(stat.avg_daily_reservations, 1) }}</td>
               <td class="px-6 py-4 text-sm">
-                  <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                    {{ formatDate(stat.peak_day_date) }} ({{ stat.peak_daily_count }})
-                  </span>
+                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                  {{ formatDate(stat.peak_day_date) }} ({{ stat.peak_daily_count || 0 }})
+                </span>
               </td>
               <td class="px-6 py-4 text-sm">
-                  <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
-                    {{ formatDate(stat.low_day_date) }} ({{ stat.low_daily_count }})
-                  </span>
+                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
+                  {{ formatDate(stat.low_day_date) }} ({{ stat.low_daily_count || 0 }})
+                </span>
               </td>
-              <td class="px-6 py-4 text-sm font-semibold text-purple-600">{{ stat.peak_hour }}:00</td>
+              <td class="px-6 py-4 text-sm font-semibold text-purple-600">{{ stat.peak_hour || 0 }}:00</td>
             </tr>
             </tbody>
           </table>
@@ -172,24 +172,24 @@
             <tr v-for="(stat, index) in monthlyStats" :key="index" class="hover:bg-gray-50 transition-colors">
               <td class="px-6 py-4 text-sm text-gray-900">{{ formatMonth(stat.month) }}</td>
               <td class="px-6 py-4 text-sm text-gray-900">{{ getLotName(stat.parking_lot_id) }}</td>
-              <td class="px-6 py-4 text-sm font-semibold text-blue-600">{{ stat.total_reservations }}</td>
-              <td class="px-6 py-4 text-sm text-gray-900">{{ stat.avg_daily_reservations?.toFixed(1) || 0 }}</td>
+              <td class="px-6 py-4 text-sm font-semibold text-blue-600">{{ stat.total_reservations || 0 }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ formatStatValue(stat.avg_daily_reservations, 1) }}</td>
               <td class="px-6 py-4 text-sm">
-                  <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                    {{ stat.peak_daily_reservations || 0 }}
-                  </span>
+                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                  {{ stat.peak_daily_reservations || 0 }}
+                </span>
               </td>
               <td class="px-6 py-4 text-sm">
-                  <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
-                    {{ stat.low_daily_reservations || 0 }}
-                  </span>
+                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
+                  {{ stat.low_daily_reservations || 0 }}
+                </span>
               </td>
               <td class="px-6 py-4 text-sm">
-                  <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
-                    {{ getDayName(stat.most_common_peak_dow) }}
-                  </span>
+                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                  {{ getDayName(stat.most_common_peak_dow) }}
+                </span>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-900">{{ stat.daily_stddev?.toFixed(2) || 0 }}</td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ formatStatValue(stat.daily_stddev, 2) }}</td>
             </tr>
             </tbody>
           </table>
@@ -233,7 +233,7 @@ export default {
       this.dailyStats.forEach(stat => {
         const key = stat.date
         if (!grouped[key]) grouped[key] = 0
-        grouped[key] += stat.total_reservations || 0
+        grouped[key] += parseFloat(stat.total_reservations) || 0
       })
 
       const dates = Object.keys(grouped).sort()
@@ -272,6 +272,13 @@ export default {
   },
 
   methods: {
+    // Funzione di formattazione globale per i valori statistici
+    formatStatValue(value, decimals = 1) {
+      if (value === null || value === undefined || value === '') return '0'
+      const num = typeof value === 'number' ? value : parseFloat(value)
+      return isNaN(num) ? '0' : num.toFixed(decimals)
+    },
+
     getDefaultStartDate() {
       const date = new Date()
       date.setDate(date.getDate() - 30)
@@ -439,9 +446,18 @@ export default {
       const ctx = canvas.getContext('2d')
 
       if (this.chartData && this.chartData.labels.length > 0) {
+        // Assicuriamoci che i dati siano numerici
+        const chartData = {
+          ...this.chartData,
+          datasets: this.chartData.datasets.map(dataset => ({
+            ...dataset,
+            data: dataset.data.map(val => parseFloat(val) || 0)
+          }))
+        }
+
         this.dailyChartInstance = new Chart(ctx, {
           type: 'line',
-          data: this.chartData,
+          data: chartData,
           options: {
             responsive: true,
             maintainAspectRatio: false,

@@ -76,7 +76,8 @@ const routes = [
         path: '/parking',
         name: 'OperatorView',
         component: OperatorView,
-    }
+    },
+
 ]
 
 const router = createRouter({
